@@ -16,7 +16,7 @@ connection.connect((err) => err && console.log(err));
  * WARM UP ROUTES *
  ******************/
 
-// Route 1: GET /author/:type
+// Route 1: GET /author/:type => LEFT FOR BASIC TESTING
 const author = async function(req, res) {
   // TODO (TASK 1): replace the values of name and pennKey with your own
   const name = 'Joseph Cho';
@@ -39,19 +39,10 @@ const author = async function(req, res) {
   }
 }
 
-// Route 2: GET /random
+// Simple Testing Route : GET /random
 const random = async function(req, res) {
-  // you can use a ternary operator to check the value of request query values
-  // which can be particularly useful for setting the default value of queries
-  // note if users do not provide a value for the query it will be undefined, which is falsey
-  const explicit = req.query.explicit === 'true' ? 1 : 0;
-
-  // Here is a complete example of how to query the database in JavaScript.
-  // Only a small change (unrelated to querying) is required for TASK 3 in this route.
   connection.query(`
-    SELECT *
-    FROM Songs
-    WHERE explicit <= ${explicit}
+    SELECT champion_name FROM Champion
     ORDER BY RAND()
     LIMIT 1
   `, (err, data) => {
@@ -68,8 +59,7 @@ const random = async function(req, res) {
       // so we just directly access the first element of the query results array (data)
       // TODO (TASK 3): also return the song title in the response
       res.json({
-        song_id: data[0].song_id,
-        title: data[0].title,
+        champion_name : data[0].champion_name,
       });
     }
   });
