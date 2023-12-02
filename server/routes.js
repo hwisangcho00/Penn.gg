@@ -65,6 +65,30 @@ const random = async function(req, res) {
   });
 }
 
+/**
+ * Query 7.	Calculate the win rate for each champion (each champion can be distinguished by the unique champion_id) 
+ * and return the list of champions and their respective win rates in descending order (the champion with the highest win rate appears first on the list).
+ * 
+ * Used Index to optimize the efficiency of the query
+ */
+
+const winrate = async function(req, res) {
+  connection.query(`
+    SELECT champion_id, COUNT(DISTINCT game_id) AS total_games_played, SUM(win) AS total_games_won, AVG(win) * 100 AS win_rate
+    FROM Player
+    GROUP BY champion_id
+    ORDER BY win_rate DESC;
+  `, (err, data) => {
+    if (err || data.length === 0) {
+      console.log(err);
+      res.json({});
+    } else {
+      res.json(data);
+    }
+  });
+}
+
+
 /********************************
  * BASIC SONG/ALBUM INFO ROUTES *
  ********************************/
@@ -281,4 +305,5 @@ module.exports = {
   top_songs,
   top_albums,
   search_songs,
+  winrate,
 }
