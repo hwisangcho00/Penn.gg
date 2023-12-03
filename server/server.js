@@ -24,7 +24,9 @@ app.get('/random', routes.random);
 app.get('/winrate_champion', routes.winrate_champion);
 app.get('/winrate_item', routes.winrate_item);
 app.get('/pickrate_champion', routes.pickrate_champion);
-
+app.post('/champion_data', routes.champion_data);
+app.get('/ranged_winrate', routes.ranged_winrate);
+app.get('/stat_winrate', routes.stat_winrate);
 
 
 app.listen(config.server_port, () => {

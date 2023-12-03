@@ -58,6 +58,104 @@ const random = async function(req, res) {
 }
 
 /**
+ * Query 6.	Calculate winrate for teams that have 1, 2, 3, 4, or 5 champions that are ranged on the team 
+ * (trying to see how ranged champions influence winrate)
+ * 
+ * Used Index to optimize the efficiency of the query
+ */
+
+const ranged_winrate = async function(req, res) {
+  connection.query(`
+  WITH TeamAttackRange AS (
+    SELECT
+        p.win,
+        COUNT(DISTINCT CASE WHEN c.stats_attackrange > 200 THEN p.player_id END) AS champions_above_200
+    FROM
+        Player p
+    JOIN
+        Champion c ON p.champion_id = c.champion_id
+    GROUP BY
+        p.team_id, p.game_id
+ ) -- returns champions_above_200, a number that is how many champions have attack range over 200
+ 
+ 
+ SELECT
+    champions_above_200,
+    COUNT(*)                                                      AS total_games,
+    SUM(IF(win = 1, 1, 0))                                        AS wins,
+    CAST(SUM(IF(win = 1, 1, 0)) AS DECIMAL) / NULLIF(COUNT(*), 0) AS winrate
+ FROM
+    TeamAttackRange
+ GROUP BY
+    champions_above_200
+ ORDER BY
+    winrate DESC; 
+ 
+  `, (err, data) => {
+    if (err || data.length === 0) {
+      console.log(err);
+      res.json({});
+    } else {
+      res.json(data);
+    }
+  });
+}
+
+
+/**
+ * Query 6.	Show data for a certain champion (champion_id, name, average (kills, deaths, assists, largestKillingSpree, largestMultiKill, killingSprees, longestTimeSpentLiving)) 
+ * 
+ * Used Index to optimize the efficiency of the query
+ */
+
+const champion_data = async function(req, res) {
+  let champion_id = req.params.champion_id
+  if (champion_id === undefined) {
+    champion_id = '84'
+  }
+
+  connection.query(`
+  WITH ChampionStats AS (
+    SELECT
+        p.champion_id,
+        p.stats_kills,
+        p.stats_deaths,
+        p.stats_assists,
+        p.stats_largestKillingSpree,
+        p.stats_largestMultiKill,
+        p.stats_killingSprees,
+        p.stats_longestTimeSpentLiving
+    FROM
+        Player p
+    WHERE
+        p.champion_id = '${champion_id}'
+  )
+
+
+  SELECT
+    AVG(p.stats_kills) AS avg_kills,
+    AVG(p.stats_deaths) AS avg_deaths,
+    AVG(p.stats_assists) AS avg_assists,
+    AVG(p.stats_largestKillingSpree) AS avg_largestKillingSpree,
+    AVG(p.stats_largestMultiKill) AS avg_largestMultiKill,
+    AVG(p.stats_killingSprees) AS avg_killingSprees,
+    AVG(p.stats_longestTimeSpentLiving) AS avg_longestTimeSpentLiving
+  FROM
+    ChampionStats as p
+  GROUP BY
+    champion_id; 
+  `, (err, data) => {
+    if (err || data.length === 0) {
+      console.log(err);
+      res.json({});
+    } else {
+      res.json(data);
+    }
+  });
+}
+
+
+/**
  * Query 7.	Calculate the win rate for each champion (each champion can be distinguished by the unique champion_id) 
  * and return the list of champions and their respective win rates in descending order (the champion with the highest win rate appears first on the list).
  * 
@@ -104,6 +202,65 @@ const pickrate_champion = async function(req, res) {
     CROSS JOIN TotalGames TG
     JOIN Champion c ON GPC.champion_id = c.champion_id
     ORDER BY pick_rate DESC;
+  `, (err, data) => {
+    if (err || data.length === 0) {
+      console.log(err);
+      res.json({});
+    } else {
+      res.json(data);
+    }
+  });
+}
+
+/**
+ * Query 9.	Calculate the win rate for each stat
+ * 
+ * Used Index to optimize the efficiency of the query
+ */
+
+const stat_winrate = async function(req, res) {
+  connection.query(`
+  SELECT 'firstBlood' AS stat, SUM(firstBlood = 1 AND win = 1) / SUM(firstBlood = 1) AS winrate
+  FROM Team
+  
+  
+  UNION
+  
+  
+  SELECT 'firstTower' AS stat, SUM(firstTower = 1 AND win = 1) / SUM(firstTower = 1) AS winrate
+  FROM Team
+  
+  
+  UNION
+  
+  
+  SELECT
+     'firstInhibitor' AS stat, SUM(firstInhibitor = 1 AND win = 1) / SUM(firstInhibitor = 1) AS winrate
+  FROM Team
+  
+  
+  UNION
+  
+  
+  SELECT
+     'firstBaron' AS stat, SUM(firstBaron = 1 AND win = 1) / SUM(firstBaron = 1) AS winrate
+  FROM Team
+  
+  
+  UNION
+  
+  
+  SELECT
+     'firstDragon' AS stat, SUM(firstDragon = 1 AND win = 1) / SUM(firstDragon = 1) AS winrate
+  FROM Team
+  
+  
+  UNION
+  
+  
+  SELECT
+     'firstRiftHerald' AS stat, SUM(firstRiftHerald = 1 AND win = 1) / SUM(firstRiftHerald = 1) AS winrate
+  FROM Team;
   `, (err, data) => {
     if (err || data.length === 0) {
       console.log(err);
@@ -443,4 +600,7 @@ module.exports = {
   winrate_champion,
   winrate_item,
   pickrate_champion,
+  champion_data,
+  ranged_winrate,
+  stat_winrate,
 }
