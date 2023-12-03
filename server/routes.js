@@ -58,7 +58,7 @@ const random = async function(req, res) {
 }
 
 /**
- * Query 6.	Calculate winrate for teams that have 1, 2, 3, 4, or 5 champions that are ranged on the team 
+ * Query 5.	Calculate winrate for teams that have 1, 2, 3, 4, or 5 champions that are ranged on the team 
  * (trying to see how ranged champions influence winrate)
  * 
  * Used Index to optimize the efficiency of the query
@@ -67,29 +67,27 @@ const random = async function(req, res) {
 const ranged_winrate = async function(req, res) {
   connection.query(`
   WITH TeamAttackRange AS (
-    SELECT
-        p.win,
-        COUNT(DISTINCT CASE WHEN c.stats_attackrange > 200 THEN p.player_id END) AS champions_above_200
-    FROM
-        Player p
-    JOIN
-        Champion c ON p.champion_id = c.champion_id
-    GROUP BY
-        p.team_id, p.game_id
- ) -- returns champions_above_200, a number that is how many champions have attack range over 200
- 
- 
- SELECT
-    champions_above_200,
-    COUNT(*)                                                      AS total_games,
-    SUM(IF(win = 1, 1, 0))                                        AS wins,
-    CAST(SUM(IF(win = 1, 1, 0)) AS DECIMAL) / NULLIF(COUNT(*), 0) AS winrate
- FROM
-    TeamAttackRange
- GROUP BY
-    champions_above_200
- ORDER BY
-    winrate DESC; 
+      SELECT
+          p.win,
+          COUNT(DISTINCT CASE WHEN c.stats_attackrange > 200 THEN p.player_id END) AS champions_above_200
+      FROM
+          Player p
+      JOIN
+          Champion c ON p.champion_id = c.champion_id
+      GROUP BY
+          p.team_id, p.game_id
+  ) -- returns champions_above_200, a number that is how many champions have attack range over 200
+  SELECT
+      champions_above_200,
+      COUNT(*)                                                      AS total_games,
+      SUM(win)                                                      AS wins,
+      CAST(SUM(win) AS DECIMAL) / NULLIF(COUNT(*), 0) AS winrate
+  FROM
+      TeamAttackRange
+  GROUP BY
+      champions_above_200
+  ORDER BY
+      winrate DESC;
  
   `, (err, data) => {
     if (err || data.length === 0) {
