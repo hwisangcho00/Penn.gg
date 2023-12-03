@@ -47,17 +47,9 @@ const random = async function(req, res) {
     LIMIT 1
   `, (err, data) => {
     if (err || data.length === 0) {
-      // If there is an error for some reason, or if the query is empty (this should not be possible)
-      // print the error message and return an empty object instead
       console.log(err);
-      // Be cognizant of the fact we return an empty object {}. For future routes, depending on the
-      // return type you may need to return an empty array [] instead.
       res.json({});
     } else {
-      // Here, we return results of the query as an object, keeping only relevant data
-      // being song_id and title which you will add. In this case, there is only one song
-      // so we just directly access the first element of the query results array (data)
-      // TODO (TASK 3): also return the song title in the response
       res.json({
         champion_name : data[0].champion_name,
       });
@@ -72,7 +64,7 @@ const random = async function(req, res) {
  * Used Index to optimize the efficiency of the query
  */
 
-const winrate = async function(req, res) {
+const winrate_champion = async function(req, res) {
   connection.query(`
     SELECT champion_id, COUNT(DISTINCT game_id) AS total_games_played, SUM(win) AS total_games_won, AVG(win) * 100 AS win_rate
     FROM Player
@@ -88,6 +80,149 @@ const winrate = async function(req, res) {
   });
 }
 
+/**
+ * Query 8.	Calculate the pick rate for each champion (that is, how many times that champion has been chosen to play in a game) 
+ * and return the list of champions and their respective pick rate in descending order 
+ * (the champion with the highest pick rate appears first on the list).
+ * 
+ * Used Index to optimize the efficiency of the query
+ */
+
+const pickrate_champion = async function(req, res) {
+  connection.query(`
+    WITH TotalGames AS (
+      SELECT COUNT(DISTINCT game_id) AS total_games
+      FROM Game
+    ),
+    GamesPlayedByChampion AS (
+        SELECT champion_id, COUNT(DISTINCT game_id) AS total_games_played
+        FROM Player
+        GROUP BY champion_id
+    )
+    SELECT GPC.champion_id, c.champion_name, (CAST(GPC.total_games_played AS DECIMAL) / TG.total_games) * 100 AS pick_rate
+    FROM GamesPlayedByChampion GPC
+    CROSS JOIN TotalGames TG
+    JOIN Champion c ON GPC.champion_id = c.champion_id
+    ORDER BY pick_rate DESC;
+  `, (err, data) => {
+    if (err || data.length === 0) {
+      console.log(err);
+      res.json({});
+    } else {
+      res.json(data);
+    }
+  });
+}
+
+/**
+ * Query 10. Calculate the winrates for each item, also returning some of the information about each item.
+ * 
+ * Used Index to optimize the efficiency of the query
+ */
+
+const winrate_item = async function(req, res) {
+  connection.query(`
+    WITH slot0 AS (
+      SELECT
+          p.stats_item0 AS item_id,
+          COUNT(*) AS total_games,
+          SUM(p.win) AS wins
+      FROM
+          Player p
+      WHERE
+          p.stats_item0 <> 0 AND p.stats_item0 is NOT NULL
+      GROUP BY
+          p.stats_item0
+  ),
+  slot1 AS (
+      SELECT
+          p.stats_item1 AS item_id,
+          COUNT(*) AS total_games,
+          SUM(p.win) AS wins
+      FROM
+          Player p
+      WHERE
+          p.stats_item1 <> 0 AND p.stats_item1 is NOT NULL
+      GROUP BY
+          p.stats_item1
+  ),
+  slot2 AS (
+      SELECT
+          p.stats_item2 AS item_id,
+          COUNT(*) AS total_games,
+          SUM(p.win) AS wins
+      FROM
+          Player p
+      WHERE
+          p.stats_item2 <> 0 AND p.stats_item2 is NOT NULL
+      GROUP BY
+          p.stats_item2
+  ),
+  slot3 AS (
+      SELECT
+          p.stats_item3 AS item_id,
+          COUNT(*) AS total_games,
+          SUM(p.win) AS wins
+      FROM
+          Player p
+      WHERE
+          p.stats_item3 <> 0 AND p.stats_item3 is NOT NULL
+      GROUP BY
+          p.stats_item3
+  ),
+  slot4 AS (
+      SELECT
+          p.stats_item4 AS item_id,
+          COUNT(*) AS total_games,
+          SUM(p.win) AS wins
+      FROM
+          Player p
+      WHERE
+          p.stats_item4 <> 0 AND p.stats_item4 is NOT NULL
+      GROUP BY
+          p.stats_item4
+  ),
+  slot5 AS (
+      SELECT
+          p.stats_item5 AS item_id,
+          COUNT(*) AS total_games,
+          SUM(p.win) AS wins
+      FROM
+          Player p
+      WHERE
+          p.stats_item5 <> 0 AND p.stats_item5 is NOT NULL
+      GROUP BY
+          p.stats_item5
+  ),
+  allSlotsUnion AS (
+      (SELECT * FROM slot0) UNION (SELECT * FROM slot1) UNION (SELECT * FROM slot2) UNION (SELECT * FROM slot3) UNION
+      (SELECT * FROM slot4) UNION (SELECT * FROM slot5)
+  ),
+  allSlots AS (
+      SELECT item_id, SUM(total_games) as total_games, SUM(wins) as wins
+      FROM allSlotsUnion
+      GROUP BY item_id
+  )
+  SELECT
+      allSlots.item_id,
+      i.item_name,
+      i.item_explain,
+      allSlots.total_games,
+      allSlots.wins,
+      (allSlots.wins * 100.0 / NULLIF(allSlots.total_games, 0)) AS win_rate
+  FROM
+      allSlots Join Item i ON allSlots.item_id = i.item_id
+  ORDER BY
+      win_rate DESC, total_games DESC;
+  `, (err, data) => {
+    if (err || data.length === 0) {
+      console.log(err);
+      res.json({});
+    } else {
+      res.json(data);
+    }
+  });
+}
 
 /********************************
  * BASIC SONG/ALBUM INFO ROUTES *
@@ -305,5 +440,7 @@ module.exports = {
   top_songs,
   top_albums,
   search_songs,
-  winrate,
+  winrate_champion,
+  winrate_item,
+  pickrate_champion,
 }

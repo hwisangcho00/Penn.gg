@@ -21,7 +21,11 @@ app.use(cors({
 // app.get('/search_songs', routes.search_songs);
 
 app.get('/random', routes.random);
-app.get('/winrate', routes.winrate);
+app.get('/winrate_champion', routes.winrate_champion);
+app.get('/winrate_item', routes.winrate_item);
+app.get('/pickrate_champion', routes.pickrate_champion);
+
+
 
 app.listen(config.server_port, () => {
   console.log(`Server running at http://${config.server_host}:${config.server_port}/`)
