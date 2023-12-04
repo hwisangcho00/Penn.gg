@@ -136,7 +136,7 @@ const champion_data = async function(req, res) {
       console.log(err);
       res.json({});
     } else {
-      res.json(data);
+      res.json(data[0]);
     }
   });
 }
@@ -146,15 +146,21 @@ const champion_data = async function(req, res) {
  * Query 7.	Calculate the win rate for each champion (each champion can be distinguished by the unique champion_id) 
  * and return the list of champions and their respective win rates in descending order (the champion with the highest win rate appears first on the list).
  * 
- * Used Index to optimize the efficiency of the query
+ * Used Calculate the win rate for each champion (each champion can be distinguished by the unique champion_id) 
+ * and return the list of champions and their respective win rates in descending order (the champion with the highest win rate appears first on the list).Index to optimize the efficiency of the query
  */
 
 const winrate_champion = async function(req, res) {
+
+  const order = req.query.order ?? 0;
+
+  const orderString = order === 0 ? "DESC" : "ASC";
+
   connection.query(`
     SELECT champion_id, COUNT(DISTINCT game_id) AS total_games_played, SUM(win) AS total_games_won, AVG(win) * 100 AS win_rate
     FROM Player
     GROUP BY champion_id
-    ORDER BY win_rate DESC;
+    ORDER BY win_rate ${orderString};
   `, (err, data) => {
     if (err || data.length === 0) {
       console.log(err);
@@ -174,6 +180,11 @@ const winrate_champion = async function(req, res) {
  */
 
 const pickrate_champion = async function(req, res) {
+
+  const order = req.query.order ?? 0;
+
+  const orderString = order === 0 ? "DESC" : "ASC";
+
   connection.query(`
     WITH TotalGames AS (
       SELECT COUNT(DISTINCT game_id) AS total_games
@@ -188,7 +199,7 @@ const pickrate_champion = async function(req, res) {
     FROM GamesPlayedByChampion GPC
     CROSS JOIN TotalGames TG
     JOIN Champion c ON GPC.champion_id = c.champion_id
-    ORDER BY pick_rate DESC;
+    ORDER BY pick_rate ${orderString};
   `, (err, data) => {
     if (err || data.length === 0) {
       console.log(err);
@@ -265,6 +276,11 @@ const stat_winrate = async function(req, res) {
  */
 
 const winrate_item = async function(req, res) {
+
+  const order = req.query.order ?? 0;
+
+  const orderString = order === 0 ? "DESC" : "ASC";
+
   connection.query(`
     WITH slot0 AS (
       SELECT
@@ -357,7 +373,7 @@ const winrate_item = async function(req, res) {
   FROM
       allSlots Join Item i ON allSlots.item_id = i.item_id
   ORDER BY
-      win_rate DESC, total_games DESC;
+      win_rate DESC, total_games ${orderString};
   `, (err, data) => {
     if (err || data.length === 0) {
       console.log(err);
