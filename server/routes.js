@@ -58,6 +58,66 @@ const random = async function(req, res) {
 }
 
 /**
+ * 
+ * GET : /getTopOpponentsByLane/:championId/:lane
+ * 
+ * Query 2.	Given a champion, choose five champions from each lane with the highest losing probability 
+ * when played as an opponent team
+ * 
+ * Used Index to optimize the efficiency of the query
+ */
+const getTopOpponentsByLane = async function(req, res) {
+  
+
+  connection.query(`
+    with champ_games as (select game_id as gamenum, team_id as teamnum
+      from Player
+      where champion_id = ${req.params.championId}),
+      op_champs as (select *
+      from Player p join champ_games c on p.team_id <> c.teamnum and p.game_id = c.gamenum),
+        prob_table as (SELECT champion_id, SUM(win) as wins, COUNT(*) as total_games,
+            SUM(win) / COUNT(*) AS win_probability
+      FROM op_champs
+      GROUP BY champion_id),
+      probs as (
+      select p.*, C.champion_name
+      from prob_table p join Champion C on p.champion_id = C.champion_id
+      order by win_probability desc),
+      lanecount as (
+        select
+            pr.champion_id,
+            pr.champion_name,
+            pr.win_probability,
+            lc.lane,
+            lc.count
+        from probs pr
+        join (
+            select
+                champion_id,
+                timeline_lane as lane,
+                count(*) as count
+            from op_champs
+            where timeline_lane <> 'NONE'
+            group by champion_id, timeline_lane
+            order by champion_id, count(*) desc
+        ) lc on pr.champion_id = lc.champion_id
+        group by pr.champion_id)
+      select *
+      from lanecount
+      where lane = '${req.params.lane}' and count > 10 and champion_id <> ${req.params.championId}
+      order by win_probability desc
+      limit 5;
+  `, (err, data) => {
+    if (err || data.length === 0) {
+      console.log(err);
+      res.json({});
+    } else {
+      res.json(data);
+    }
+  });
+}
+
+/**
  * Query 5.	Calculate winrate for teams that have 1, 2, 3, 4, or 5 champions that are ranged on the team 
  * (trying to see how ranged champions influence winrate)
  * 
@@ -591,15 +651,8 @@ const search_songs = async function(req, res) {
 }
 
 module.exports = {
-  author,
   random,
-  song,
-  album,
-  albums,
-  album_songs,
-  top_songs,
-  top_albums,
-  search_songs,
+  getTopOpponentsByLane,
   winrate_champion,
   winrate_item,
   pickrate_champion,
