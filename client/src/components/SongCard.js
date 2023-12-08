@@ -19,17 +19,7 @@ export default function SongCard({ songId, handleClose }) {
   // TODO (TASK 20): fetch the song specified in songId and based on the fetched album_id also fetch the album data
   // Hint: you need to both fill in the callback and the dependency array (what variable determines the information you need to fetch?)
   // Hint: since the second fetch depends on the information from the first, try nesting the second fetch within the then block of the first (pseudocode is provided)
-  useEffect(() => {
-    fetch(`http://${config.server_host}:${config.server_port}/song/${songId}`)
-      .then(res => res.json())
-      .then(resJson => {
-        setSongData(resJson);
-        fetch(`http://${config.server_host}:${config.server_port}/album/${songData.album_id}`)
-          .then(res => res.json())
-          .then(resJson => {setAlbumData(resJson)});
-      });
 
-  }, [songId]);
 
   const chartData = [
     { name: 'Danceability', value: songData.danceability },
