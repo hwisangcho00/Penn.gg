@@ -198,7 +198,35 @@ const getItemRecommendation = async function(req, res) {
     });
 }
 
-
+/**
+ * GET : /teamCombination/:team1/:team2/:team3/:team4
+ * 
+ * Query 4.	Retrieve the number of games won and lost when five specific champions are played together on the same team.
+ * 
+ */
+const getTeamCombination = async function(req, res) {
+  connection.query(`
+    SELECT
+    COUNT(*) AS total_games,
+    SUM(win) AS wins,
+    (COUNT(*) - SUM(win)) AS losses
+    FROM
+      Player p
+    WHERE
+      p.champion_id IN (${req.params.team1}, ${req.params.team2},${req.params.team3}, ${req.params.team4})
+    GROUP BY
+      p.game_id, p.team_id
+    HAVING
+      COUNT(DISTINCT p.champion_id) = 5;
+    `, (err, data) => {
+      if (err || data.length === 0) {
+        console.log(err);
+        res.json({});
+      } else {
+        res.json(data);
+      }
+    });
+}
 
 
 /**
@@ -446,6 +474,7 @@ module.exports = {
   getBestTeammate,
   getTopOpponentsByLane,
   getItemRecommendation,
+  getTeamCombination,
   winrate_champion,
   winrate_item,
   pickrate_champion,
