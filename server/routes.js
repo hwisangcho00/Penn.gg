@@ -102,8 +102,6 @@ const getBestTeammate = async function(req, res) {
  * Used Index to optimize the efficiency of the query
  */
 const getTopOpponentsByLane = async function(req, res) {
-  
-
   connection.query(`
     with champ_games as (select game_id as gamenum, team_id as teamnum
       from Player
@@ -151,6 +149,57 @@ const getTopOpponentsByLane = async function(req, res) {
     }
   });
 }
+
+/**
+ * GET : /itemRecommendation/:championId
+ * 
+ * Query 3.	For a given champion_id, recommend the list of items by presenting them in order of highest winning probability to lowest when an item is purchased
+ * 
+ * Used Index to optimize the efficiency of the query
+ */
+const getItemRecommendation = async function(req, res) {
+  connection.query(`
+    WITH champ_items AS (
+      SELECT p.win, p.stats_item0 AS item FROM Player p WHERE p.champion_id = ${req.params.championId}
+      UNION ALL
+      SELECT p.win, p.stats_item1 FROM Player p WHERE p.champion_id = ${req.params.championId}
+      UNION ALL
+      SELECT p.win, p.stats_item2 FROM Player p WHERE p.champion_id = ${req.params.championId}
+      UNION ALL
+      SELECT p.win, p.stats_item3 FROM Player p WHERE p.champion_id = ${req.params.championId}
+      UNION ALL
+      SELECT p.win, p.stats_item4 FROM Player p WHERE p.champion_id = ${req.params.championId}
+      UNION ALL
+      SELECT p.win, p.stats_item5 FROM Player p WHERE p.champion_id = ${req.params.championId}
+  ), item_recs AS (
+      SELECT
+          item,
+          SUM(win) AS wins,
+          COUNT(*) AS total,
+          SUM(win) / COUNT(*) AS prob_wins
+      FROM champ_items
+      WHERE item <> 0
+      GROUP BY item
+      HAVING COUNT(*) > 100
+  )
+  SELECT
+      ir.*,
+      i.item_name AS name
+  FROM item_recs ir
+  JOIN Item i ON ir.item = i.item_id
+  ORDER BY prob_wins DESC;
+    `, (err, data) => {
+      if (err || data.length === 0) {
+        console.log(err);
+        res.json({});
+      } else {
+        res.json(data);
+      }
+    });
+}
+
+
+
 
 /**
  * Query 5.	Calculate winrate for teams that have 1, 2, 3, 4, or 5 champions that are ranged on the team 
@@ -396,6 +445,7 @@ module.exports = {
   random,
   getBestTeammate,
   getTopOpponentsByLane,
+  getItemRecommendation,
   winrate_champion,
   winrate_item,
   pickrate_champion,
