@@ -127,17 +127,13 @@ const ranged_winrate = async function(req, res) {
 
 
 /**
+ * GET /champion_data/:championId
+ * 
  * Query 6.	Show data for a certain champion (champion_id, name, average (kills, deaths, assists, largestKillingSpree, largestMultiKill, killingSprees, longestTimeSpentLiving)) 
  * 
  * Used Index to optimize the efficiency of the query
  */
-
 const champion_data = async function(req, res) {
-  let champion_id = req.params.champion_id
-  if (champion_id === undefined) {
-    champion_id = '84'
-  }
-
   connection.query(`
   WITH ChampionStats AS (
     SELECT
@@ -152,10 +148,8 @@ const champion_data = async function(req, res) {
     FROM
         Player p
     WHERE
-        p.champion_id = '${champion_id}'
+        p.champion_id = '${req.params.championId}'
   )
-
-
   SELECT
     AVG(p.stats_kills) AS avg_kills,
     AVG(p.stats_deaths) AS avg_deaths,
