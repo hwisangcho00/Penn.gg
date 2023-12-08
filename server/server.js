@@ -23,8 +23,8 @@ app.use(cors({
 app.get('/random', routes.random);
 app.get('/getBestTeammate/:championId/:lane', routes.getBestTeammate);
 app.get('/getTopOpponentsByLane/:championId/:lane', routes.getTopOpponentsByLane);
-app.get('/itemRecommendation/:championId', routes.getItemRecommendation);
-app.get('/teamCombination/:team1/:team2/:team3/:team4', routes.getTeamCombination);
+app.get('/getItemRecommendation/:championId', routes.getItemRecommendation);
+app.get('/getTeamCombination/:team1/:team2/:team3/:team4', routes.getTeamCombination);
 app.get('/winrate_champion', routes.winrate_champion);
 app.get('/winrate_item', routes.winrate_item);
 app.get('/pickrate_champion', routes.pickrate_champion);
