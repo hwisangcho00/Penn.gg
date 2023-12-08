@@ -36,6 +36,64 @@ const random = async function(req, res) {
 
 /**
  * 
+ * GET : /getBestTeammate/:championId/:lane
+ * 
+ * Query 1. Given a champion, choose five champions from each lane (TOP, MIDDLE, BOTTOM, JUNGLE) with the highest winning probability when played as a team
+ * 
+ */
+const getBestTeammate = async function(req, res) {
+  
+
+  connection.query(`
+    WITH champ_games AS (select game_id as gamenum, team_id as teamnum
+    from Player
+    where champion_id = ${req.params.championId}),
+    team_champs as (select *
+    from Player p join champ_games c on p.team_id = c.teamnum and p.game_id = c.gamenum),
+    prob_table as (SELECT champion_id, SUM(win) as wins, COUNT(*) as total_games,
+          SUM(win) / COUNT(*) AS win_probability
+    FROM team_champs
+    GROUP BY champion_id),
+    probs as (
+    select p.*, C.champion_name
+    from prob_table p join Champion C on p.champion_id = C.champion_id
+    order by win_probability desc),
+    lanecount as (
+       select
+           pr.champion_id,
+           pr.champion_name,
+           pr.win_probability,
+           lc.lane,
+           lc.count
+       from probs pr
+       join (
+           select
+               champion_id,
+               timeline_lane as lane,
+               count(*) as count
+           from team_champs
+           where timeline_lane <> 'NONE'
+           group by champion_id, timeline_lane
+           order by champion_id, count(*) desc
+       ) lc on pr.champion_id = lc.champion_id
+       group by pr.champion_id)
+    select *
+    from lanecount
+    where lane = '${req.params.lane}' and count > 10 and champion_id <> 84
+    order by win_probability desc
+    limit 5;
+  `, (err, data) => {
+    if (err || data.length === 0) {
+      console.log(err);
+      res.json({});
+    } else {
+      res.json(data);
+    }
+  });
+}
+
+/**
+ * 
  * GET : /getTopOpponentsByLane/:championId/:lane
  * 
  * Query 2.	Given a champion, choose five champions from each lane with the highest losing probability 
@@ -44,8 +102,6 @@ const random = async function(req, res) {
  * Used Index to optimize the efficiency of the query
  */
 const getTopOpponentsByLane = async function(req, res) {
-  
-
   connection.query(`
     with champ_games as (select game_id as gamenum, team_id as teamnum
       from Player
@@ -93,6 +149,85 @@ const getTopOpponentsByLane = async function(req, res) {
     }
   });
 }
+
+/**
+ * GET : /itemRecommendation/:championId
+ * 
+ * Query 3.	For a given champion_id, recommend the list of items by presenting them in order of highest winning probability to lowest when an item is purchased
+ * 
+ * Used Index to optimize the efficiency of the query
+ */
+const getItemRecommendation = async function(req, res) {
+  connection.query(`
+    WITH champ_items AS (
+      SELECT p.win, p.stats_item0 AS item FROM Player p WHERE p.champion_id = ${req.params.championId}
+      UNION ALL
+      SELECT p.win, p.stats_item1 FROM Player p WHERE p.champion_id = ${req.params.championId}
+      UNION ALL
+      SELECT p.win, p.stats_item2 FROM Player p WHERE p.champion_id = ${req.params.championId}
+      UNION ALL
+      SELECT p.win, p.stats_item3 FROM Player p WHERE p.champion_id = ${req.params.championId}
+      UNION ALL
+      SELECT p.win, p.stats_item4 FROM Player p WHERE p.champion_id = ${req.params.championId}
+      UNION ALL
+      SELECT p.win, p.stats_item5 FROM Player p WHERE p.champion_id = ${req.params.championId}
+  ), item_recs AS (
+      SELECT
+          item,
+          SUM(win) AS wins,
+          COUNT(*) AS total,
+          SUM(win) / COUNT(*) AS prob_wins
+      FROM champ_items
+      WHERE item <> 0
+      GROUP BY item
+      HAVING COUNT(*) > 100
+  )
+  SELECT
+      ir.*,
+      i.item_name AS name
+  FROM item_recs ir
+  JOIN Item i ON ir.item = i.item_id
+  ORDER BY prob_wins DESC;
+    `, (err, data) => {
+      if (err || data.length === 0) {
+        console.log(err);
+        res.json({});
+      } else {
+        res.json(data);
+      }
+    });
+}
+
+/**
+ * GET : /teamCombination/:team1/:team2/:team3/:team4
+ * 
+ * Query 4.	Retrieve the number of games won and lost when five specific champions are played together on the same team.
+ * 
+ */
+const getTeamCombination = async function(req, res) {
+  connection.query(`
+    SELECT
+    COUNT(*) AS total_games,
+    SUM(win) AS wins,
+    (COUNT(*) - SUM(win)) AS losses
+    FROM
+      Player p
+    WHERE
+      p.champion_id IN (${req.params.team1}, ${req.params.team2},${req.params.team3}, ${req.params.team4})
+    GROUP BY
+      p.game_id, p.team_id
+    HAVING
+      COUNT(DISTINCT p.champion_id) = 5;
+    `, (err, data) => {
+      if (err || data.length === 0) {
+        console.log(err);
+        res.json({});
+      } else {
+        res.json(data);
+      }
+    });
+}
+
 
 /**
  * Query 5.	Calculate winrate for teams that have 1, 2, 3, 4, or 5 champions that are ranged on the team 
@@ -336,7 +471,10 @@ const winrate_item = async function(req, res) {
 
 module.exports = {
   random,
+  getBestTeammate,
   getTopOpponentsByLane,
+  getItemRecommendation,
+  getTeamCombination,
   winrate_champion,
   winrate_item,
   pickrate_champion,
