@@ -21,6 +21,7 @@ app.use(cors({
 // app.get('/search_songs', routes.search_songs);
 
 app.get('/random', routes.random);
+app.get('/getBestTeammate/:championId/:lane', routes.getBestTeammate);
 app.get('/getTopOpponentsByLane/:championId/:lane', routes.getTopOpponentsByLane);
 app.get('/winrate_champion', routes.winrate_champion);
 app.get('/winrate_item', routes.winrate_item);

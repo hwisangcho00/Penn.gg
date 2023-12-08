@@ -36,6 +36,64 @@ const random = async function(req, res) {
 
 /**
  * 
+ * GET : /getBestTeammate/:championId/:lane
+ * 
+ * Query 1. Given a champion, choose five champions from each lane (TOP, MIDDLE, BOTTOM, JUNGLE) with the highest winning probability when played as a team
+ * 
+ */
+const getBestTeammate = async function(req, res) {
+  
+
+  connection.query(`
+    WITH champ_games AS (select game_id as gamenum, team_id as teamnum
+    from Player
+    where champion_id = ${req.params.championId}),
+    team_champs as (select *
+    from Player p join champ_games c on p.team_id = c.teamnum and p.game_id = c.gamenum),
+    prob_table as (SELECT champion_id, SUM(win) as wins, COUNT(*) as total_games,
+          SUM(win) / COUNT(*) AS win_probability
+    FROM team_champs
+    GROUP BY champion_id),
+    probs as (
+    select p.*, C.champion_name
+    from prob_table p join Champion C on p.champion_id = C.champion_id
+    order by win_probability desc),
+    lanecount as (
+       select
+           pr.champion_id,
+           pr.champion_name,
+           pr.win_probability,
+           lc.lane,
+           lc.count
+       from probs pr
+       join (
+           select
+               champion_id,
+               timeline_lane as lane,
+               count(*) as count
+           from team_champs
+           where timeline_lane <> 'NONE'
+           group by champion_id, timeline_lane
+           order by champion_id, count(*) desc
+       ) lc on pr.champion_id = lc.champion_id
+       group by pr.champion_id)
+    select *
+    from lanecount
+    where lane = '${req.params.lane}' and count > 10 and champion_id <> 84
+    order by win_probability desc
+    limit 5;
+  `, (err, data) => {
+    if (err || data.length === 0) {
+      console.log(err);
+      res.json({});
+    } else {
+      res.json(data);
+    }
+  });
+}
+
+/**
+ * 
  * GET : /getTopOpponentsByLane/:championId/:lane
  * 
  * Query 2.	Given a champion, choose five champions from each lane with the highest losing probability 
@@ -336,6 +394,7 @@ const winrate_item = async function(req, res) {
 
 module.exports = {
   random,
+  getBestTeammate,
   getTopOpponentsByLane,
   winrate_champion,
   winrate_item,
