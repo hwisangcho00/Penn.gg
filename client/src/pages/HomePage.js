@@ -4,12 +4,13 @@ import { NavLink } from 'react-router-dom';
 import leagueImg from '../images/league.ico';
 import backgroundImg from '../images/summoners_rift.png';
 import DropDown from '../components/DropDown';
+import '../index.css';
 
 
 const config = require('../config.json');
 
-
 export default function HomePage() {
+
   const [options, setOptions] = useState(['default']);
   const [selectedOption, setSelectedOption] = useState('');
 
@@ -49,10 +50,14 @@ export default function HomePage() {
     }}>
       <div style={styles.overlay}>
         <div style={styles.container}>
-        <DropDown options={options} label="Select an option" onSelect={handleSelect} />
-        <p>Selected Option: {selectedOption}</p>
-        <h1 style={{color:'white'}}>Welcome to League Simulator!</h1>
-          <img src={leagueImg} alt="Description" style={styles.leagueIcon} />
+        <img src={leagueImg} alt="Description" style={styles.leagueIcon} />
+          <h1 style={{ fontFamily: "'leagueFont', sans-serif" }}>Welcome to League Simulator!</h1>
+          <h2 style={{ color: '#C8AA6E', fontFamily: "'leagueFont', sans-serif" }}>Select your champion:</h2>
+
+
+          <DropDown options={options} label="" onSelect={handleSelect} style={styles.champSelect} />
+          <p>Selected Option: {selectedOption}</p>
+          <button class="button">Find Best Team Comps</button>
         </div>
       </div>
     </div>
@@ -70,15 +75,21 @@ const styles = {
   },
   leagueIcon: {
     marginTop: '0px', 
-    maxWidth: '80px', 
+    maxWidth: '200px', 
     height: 'auto', 
   },
+
   //for background
   overlay: {
-    backgroundColor: 'rgba(0, 0, 0, 0.4)', // Semi-transparent white
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent white
     minHeight: '100vh', // Full viewport height
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+
+  //champion selection dropdown
+  champSelect: {
+    marginTop: '50px'
   }
 };

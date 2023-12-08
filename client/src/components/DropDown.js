@@ -17,6 +17,7 @@ function DropDown({ options, label, onSelect }) {
         value={selectedOption}
         onChange={handleChange}
         label={label}
+        sx={{ backgroundColor: 'white' }}
       >
         <MenuItem value="">
           <em>None</em>
