@@ -76,8 +76,6 @@ export default function HomePage() {
         <img src={leagueImg} alt="league logo" style={styles.leagueIcon} />
           <h1 style={{ fontFamily: "'leagueFont', sans-serif" }}>Welcome to League Simulator!</h1>
           <h2 style={{ color: '#C8AA6E', fontFamily: "'leagueFont', sans-serif" }}>Select your champion:</h2>
-
-
           <DropDown options={options} label="" onSelect={handleSelect} style={styles.champSelect} />
           <button className="button" onClick={handleButtonClick}>Find Best Team Comps</button>
         </div>

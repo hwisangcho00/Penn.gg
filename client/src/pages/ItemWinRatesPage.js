@@ -1,17 +1,37 @@
+import DropDown from '../components/DropDown';
 import { useEffect, useState } from 'react';
 import backgroundImg from '../images/summoners_rift.png';
 import { Button } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+
 const config = require('../config.json');
 
 
-export default function StatsPage() {
-    const navigate = useNavigate();
+export default function ItemWinRatesPage() {
 
-    const handleButtonClick = (navString) => {
-        //navigate("/comps", { state: { selectedChampion: selectedOption} });
-        navigate(navString);
-    };
+    const [champItemRecs, setChampItemRecs] = useState([{}]);
+
+
+    useEffect(() => {
+        
+        
+        const queryItemRecs = async () => {
+            fetch(`http://${config.server_host}:${config.server_port}/getWinrateItem`)
+                .then(res => res.json())
+                .then(resJson => {
+                    console.log("Output:")
+                    console.log(resJson)
+                    setChampItemRecs(resJson); // Update the state with the fetched data
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                    setChampItemRecs(null); // Reset the state in case of an error
+                });
+        }
+
+        queryItemRecs();
+
+    }, [])
+
 
     return (
         <div style={{
@@ -24,11 +44,31 @@ export default function StatsPage() {
             height: 'auto',
             position: 'relative'
         }}>
+            <h2 style={{ marginTop: '0px', fontSize: '40px', color: '#C8AA6E', fontFamily: 'leagueFont' }}>Item Recs Based On Winrate</h2>
+            <div style={styles.tablesContainer}>
+                {champItemRecs && (
+                    <table style={styles.table}>
+                        <thead>
+                            <tr>
+                                <th style={{ textAlign: 'center' }}>Item Name</th>
+                                <th style={{ textAlign: 'center' }}>Explanation</th>
+                                <th style={{ textAlign: 'center' }}>Winrate</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {champItemRecs.map((item, index) => (
+                                <tr key={index}>
+                                    <td>{item.item_name}</td>
+                                    <td>{item.item_explain}</td>
+                                    <td style={{ color: '#66FF00' }}>{(item.win_rate).toFixed(2)}%</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                )}
+            </div>
 
-            <Button variant="contained" onClick={() => handleButtonClick("/champItemRecs")}>Get Item Recs for Champion</Button>
-            <Button variant="contained" onClick={() => handleButtonClick("/itemWinRates")}>Get Item Recs for Champion</Button>
         </div>
-
 
     )
 
