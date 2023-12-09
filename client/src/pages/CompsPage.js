@@ -8,17 +8,21 @@ function CompsPage() {
   const selectedChampion = location.state?.selectedChampion;
   const selectedID = location.state?.selectedKey;
   const championImage = selectedChampion ? require(`../images/portraits/${selectedChampion}.png`) : null;
+  const [isLoading, setIsLoading] = useState(false);
+
 
   // best champion recommendations
   const [topRecs, setTopRecs] = useState(null);
 
 
   useEffect(() => {
-    fetch(`http://${config.server_host}:${config.server_port}/champions/:${selectedID}/lane/:TOP`)
+    //fetch(`http://${config.server_host}:${config.server_port}/getBestTeammate/:${selectedID}/:TOP`)
+    fetch(`http://${config.server_host}:${config.server_port}/getTopOpponentsByLane/119/TOP}`)
       .then(res => res.json())
       .then(data => {
         setTopRecs(data); // Update the state with the fetched data
-      })
+        setIsLoading(false); // Stop loading once data is fetched
+    })
       .catch(error => {
         console.error('Error fetching data:', error);
         setTopRecs(null); // Reset the state in case of an error
@@ -36,11 +40,14 @@ function CompsPage() {
           <div style={styles.container}>
           {championImage && <img src={championImage} alt={selectedChampion} style={styles.championImage} />}
       <h2 style={{color: '#C8AA6E', fontFamily: 'leagueFont'}}>Selected Champion: {selectedChampion || 'None'}</h2>
-      <h2 style={{color: '#C8AA6E', fontFamily: 'leagueFont'}}>Selected Champion: {selectedID || 'None'}</h2>
+      <h2 style={{color: '#C8AA6E', fontFamily: 'leagueFont'}}>Champion ID: {selectedID || 'None'}</h2>
       <h3 style={{color: '#C8AA6E', fontFamily: 'leagueFont'}}>Query Results go Here:</h3>
-      {topRecs && (
+      {isLoading ? (
+            <p style={{color: 'white'}}>Processing...</p>
+          ) : (
             <p style={{color: 'white'}}>
-              {JSON.stringify(topRecs, null, 2)}
+                Results Here: 
+              {topRecs ? JSON.stringify(topRecs, null, 2) : 'No data available'}
             </p>
           )}
           </div>
