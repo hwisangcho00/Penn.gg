@@ -1,7 +1,11 @@
 @font-face {
     font-family: 'leagueFont';
     src: local('leagueFont'), url('fonts/BeaufortforLOL-Bold.otf') format('opentype');
-    /* Adjust the URL based on your file's location and format */
+  }  
+
+  @font-face {
+    font-family: 'leagueFontLight';
+    src: local('leagueFontLight'), url('fonts/BeaufortforLOL-Regular.otf') format('opentype');
   }  
 
   h1 {
