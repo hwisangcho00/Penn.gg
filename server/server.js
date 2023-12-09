@@ -21,13 +21,16 @@ app.use(cors({
 // app.get('/search_songs', routes.search_songs);
 
 app.get('/random', routes.random);
+app.get('/getBestTeammate/:championId/:lane', routes.getBestTeammate);
 app.get('/getTopOpponentsByLane/:championId/:lane', routes.getTopOpponentsByLane);
-app.get('/winrate_champion', routes.winrate_champion);
-app.get('/winrate_item', routes.winrate_item);
-app.get('/pickrate_champion', routes.pickrate_champion);
-app.get('/champion_data', routes.champion_data);
-app.get('/ranged_winrate', routes.ranged_winrate);
-app.get('/stat_winrate', routes.stat_winrate);
+app.get('/getItemRecommendation/:championId', routes.getItemRecommendation);
+app.get('/getTeamCombination/:team1/:team2/:team3/:team4', routes.getTeamCombination);
+app.get('/getWinrateChampion', routes.winrate_champion);
+app.get('/getWinrateItem', routes.winrate_item);
+app.get('/getPickrateChampion', routes.pickrate_champion);
+app.get('/getchampionData/:championId', routes.champion_data);
+app.get('/getRangedWinrate', routes.ranged_winrate);
+app.get('/getStatWinrate', routes.stat_winrate);
 
 
 app.listen(config.server_port, () => {
