@@ -79,7 +79,7 @@ const getBestTeammate = async function(req, res) {
        group by pr.champion_id)
     select *
     from lanecount
-    where lane = '${req.params.lane}' and count > 10 and champion_id <> 84
+    where lane = '${req.params.lane}' and count > 10 and champion_id <> ${req.params.championId}
     order by win_probability desc
     limit 5;
   `, (err, data) => {
