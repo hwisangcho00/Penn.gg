@@ -25,6 +25,12 @@ function CompsPage() {
   const [midRecs, setMidRecs] = useState(null);
   const [botRecs, setBotRecs] = useState(null);
 
+  // worst opponent champion picks
+  const [topOpp, setTopOpp] = useState(null);
+  const [jgOpp, setJgOpp] = useState(null);
+  const [midOpp, setMidOpp] = useState(null);
+  const [botOpp, setBotOpp] = useState(null);
+
   // Run 4 queries, for TOP, MIDDLE, BOTTOM, JUNGLE
   useEffect(() => {
     fetch(`http://${config.server_host}:${config.server_port}/getBestTeammate/${selectedID}/TOP`)
@@ -74,6 +80,58 @@ function CompsPage() {
         console.error('Error fetching data:', error);
         setBotRecs(null); // Reset the state in case of an error
       });
+
+      // now, fetch worst enemy selections
+      // TOP Lane Opp Champions first
+      fetch(`http://${config.server_host}:${config.server_port}/getTopOpponentsByLane/${selectedID}/TOP`)
+      .then(res => res.json())
+      .then(resJson => {
+        console.log("Output:")
+        console.log(resJson)
+        setTopOpp(resJson); // Update the state with the fetched data
+    })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+        setTopOpp(null); // Reset the state in case of an error
+      });
+
+      fetch(`http://${config.server_host}:${config.server_port}/getTopOpponentsByLane/${selectedID}/JUNGLE`)
+      .then(res => res.json())
+      .then(resJson => {
+        console.log("Output:")
+        console.log(resJson)
+        setJgOpp(resJson); // Update the state with the fetched data
+    })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+        setJgOpp(null); // Reset the state in case of an error
+      });
+
+      fetch(`http://${config.server_host}:${config.server_port}/getTopOpponentsByLane/${selectedID}/MIDDLE`)
+      .then(res => res.json())
+      .then(resJson => {
+        console.log("Output:")
+        console.log(resJson)
+        setMidOpp(resJson); // Update the state with the fetched data
+    })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+        setMidOpp(null); // Reset the state in case of an error
+    });
+
+    fetch(`http://${config.server_host}:${config.server_port}/getTopOpponentsByLane/${selectedID}/BOTTOM`)
+      .then(res => res.json())
+      .then(resJson => {
+        console.log("Output:")
+        console.log(resJson)
+        setBotOpp(resJson); // Update the state with the fetched data
+    })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+        setBotOpp(null); // Reset the state in case of an error
+    });
+
+
   }, [selectedID]); // Dependency array includes selectedID to re-fetch when it changes
   
 
@@ -92,7 +150,7 @@ function CompsPage() {
           <div style={styles.container}>
           {championImage && <img src={championImage} alt={selectedChampion} style={styles.championImage} />}
       <h2 style={{fontSize:'70px', marginTop:'0px', color: '#C8AA6E', fontFamily: 'leagueFont'}}>{selectedChampion || 'None'}</h2>
-      <h2 style={{marginTop: '0px', fontSize: '40px', color: '#C8AA6E', fontFamily: 'leagueFont'}}>Best Team Compositions</h2>
+      <h2 style={{marginTop: '0px', fontSize: '40px', color: '#C8AA6E', fontFamily: 'leagueFont'}}>{selectedChampion} is best with...</h2>
       
       <div style={styles.tablesContainer}>
         {topRecs && (
@@ -101,7 +159,7 @@ function CompsPage() {
                 <tr>
                     <th style={{textAlign: 'center'}}>Portraits</th>
                     <th style={{textAlign: 'center'}}>TOP Lane Champions</th>
-                    <th style={{textAlign: 'center'}}>Win Probability</th>
+                    <th style={{textAlign: 'center'}}>Winrate</th>
                 </tr>
               </thead>
               <tbody>
@@ -113,7 +171,7 @@ function CompsPage() {
           style={{ width: '60px', height: 'auto' }} 
         /></td>
                     <td>{item.champion_name}</td>
-                    <td>{(item.win_probability * 100).toFixed(2)}%</td>
+                    <td style={{color: '#66FF00'}}>{(item.win_probability * 100).toFixed(2)}%</td>
                   </tr>
                 ))}
               </tbody>
@@ -126,7 +184,7 @@ function CompsPage() {
                 <tr>
                     <th style={{textAlign: 'center'}}>Portraits</th>
                     <th style={{textAlign: 'center'}}>JUNGLE Lane Champions</th>
-                    <th style={{textAlign: 'center'}}>Win Probability</th>
+                    <th style={{textAlign: 'center'}}>Winrate</th>
                 </tr>
               </thead>
               <tbody>
@@ -138,7 +196,7 @@ function CompsPage() {
           style={{ width: '60px', height: 'auto' }} 
         /></td>
                     <td>{item.champion_name}</td>
-                    <td>{(item.win_probability * 100).toFixed(2)}%</td>
+                    <td style={{color: '#66FF00'}}>{(item.win_probability * 100).toFixed(2)}%</td>
                   </tr>
                 ))}
               </tbody>
@@ -153,7 +211,7 @@ function CompsPage() {
                 <tr>
                     <th style={{textAlign: 'center'}}>Portraits</th>
                     <th style={{textAlign: 'center'}}>MID Lane Champions</th>
-                    <th style={{textAlign: 'center'}}>Win Probability</th>
+                    <th style={{textAlign: 'center'}}>Winrate</th>
                 </tr>
               </thead>
               <tbody>
@@ -165,20 +223,20 @@ function CompsPage() {
           style={{ width: '60px', height: 'auto' }} 
         /></td>
                     <td>{item.champion_name}</td>
-                    <td>{(item.win_probability * 100).toFixed(2)}%</td>
+                    <td style={{color: '#66FF00'}}>{(item.win_probability * 100).toFixed(2)}%</td>
                   </tr>
                 ))}
               </tbody>
             </table>
         )}
 
-{botRecs && (
+    {botRecs && (
             <table style={styles.table}>
               <thead>
                 <tr>
                     <th style={{textAlign: 'center'}}>Portraits</th>
                     <th style={{textAlign: 'center'}}>BOT Lane Champions</th>
-                    <th style={{textAlign: 'center'}}>Win Probability</th>
+                    <th style={{textAlign: 'center'}}>Winrate</th>
                 </tr>
               </thead>
               <tbody>
@@ -190,7 +248,112 @@ function CompsPage() {
           style={{ width: '60px', height: 'auto' }} 
         /></td>
                     <td>{item.champion_name}</td>
-                    <td>{(item.win_probability * 100).toFixed(2)}%</td>
+                    <td style={{color: '#66FF00'}}>{(item.win_probability * 100).toFixed(2)}%</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+        )}
+        </div>
+        <h2 style={{marginTop: '100px', fontSize: '40px', color: '#C8AA6E', fontFamily: 'leagueFont'}}>{selectedChampion} loses more against...</h2>
+
+        <div style={styles.tablesContainer}>
+        {topOpp && (
+            <table style={styles.table}>
+              <thead>
+                <tr>
+                    <th style={{textAlign: 'center'}}>Portraits</th>
+                    <th style={{textAlign: 'center'}}>TOP Lane Champions</th>
+                    <th style={{textAlign: 'center'}}>Winrate</th>
+                </tr>
+              </thead>
+              <tbody>
+                {topOpp.map((item, index) => (
+                  <tr key={index}>
+                    <td><img
+          src={getImageSrc(item.champion_name)}
+          alt={item.champion_name}
+          style={{ width: '60px', height: 'auto' }} 
+        /></td>
+                    <td>{item.champion_name}</td>
+                    <td style={{color: 'red'}}>{(100 - item.win_probability * 100).toFixed(2)}%</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+        )}
+
+        {jgOpp && (
+            <table style={styles.table}>
+              <thead>
+                <tr>
+                    <th style={{textAlign: 'center'}}>Portraits</th>
+                    <th style={{textAlign: 'center'}}>JUNGLE Lane Champions</th>
+                    <th style={{textAlign: 'center'}}>Winrate</th>
+                </tr>
+              </thead>
+              <tbody>
+                {jgOpp.map((item, index) => (
+                  <tr key={index}>
+                    <td><img
+          src={getImageSrc(item.champion_name)}
+          alt={item.champion_name}
+          style={{ width: '60px', height: 'auto' }} 
+        /></td>
+                    <td>{item.champion_name}</td>
+                    <td style={{color: 'red'}}>{(100 - item.win_probability * 100).toFixed(2)}%</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+        )}
+        </div>
+
+        <div style={styles.tablesContainer}>
+        {midOpp && (
+            <table style={styles.table}>
+              <thead>
+                <tr>
+                    <th style={{textAlign: 'center'}}>Portraits</th>
+                    <th style={{textAlign: 'center'}}>MID Lane Champions</th>
+                    <th style={{textAlign: 'center'}}>Winrate</th>
+                </tr>
+              </thead>
+              <tbody>
+                {midOpp.map((item, index) => (
+                  <tr key={index}>
+                    <td><img
+          src={getImageSrc(item.champion_name)}
+          alt={item.champion_name}
+          style={{ width: '60px', height: 'auto' }} 
+        /></td>
+                    <td>{item.champion_name}</td>
+                    <td style={{color: 'red'}}>{(100 - item.win_probability * 100).toFixed(2)}%</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+        )}
+
+        {botOpp && (
+            <table style={styles.table}>
+              <thead>
+                <tr>
+                    <th style={{textAlign: 'center'}}>Portraits</th>
+                    <th style={{textAlign: 'center'}}>BOT Lane Champions</th>
+                    <th style={{textAlign: 'center'}}>Winrate</th>
+                </tr>
+              </thead>
+              <tbody>
+                {botOpp.map((item, index) => (
+                  <tr key={index}>
+                    <td><img
+          src={getImageSrc(item.champion_name)}
+          alt={item.champion_name}
+          style={{ width: '60px', height: 'auto' }} 
+        /></td>
+                    <td>{item.champion_name}</td>
+                    <td style={{color: 'red'}}>{(100 - item.win_probability * 100).toFixed(2)}%</td>
                   </tr>
                 ))}
               </tbody>
@@ -200,6 +363,7 @@ function CompsPage() {
           </div>
         </div>
     </div>
+
   );
 }
 
@@ -229,7 +393,7 @@ const styles = {
   
     // champion image
     championImage: {
-        paddingTop: '300px',
+        paddingTop: '1200px',
         display: 'block', // to enable margin auto
         marginLeft: 'auto', // center the image
         marginRight: 'auto', // center the image
