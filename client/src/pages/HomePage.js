@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Container, Divider, Link } from '@mui/material';
 import { NavLink } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+
+// basic imports
 import leagueImg from '../images/league.ico';
 import backgroundImg from '../images/summoners_rift.png';
 import DropDown from '../components/DropDown';
@@ -13,6 +16,10 @@ export default function HomePage() {
 
   const [options, setOptions] = useState(['default']);
   const [selectedOption, setSelectedOption] = useState('');
+  const [idToKeyMap, setIdToKeyMap] = useState({});
+  const [selectedID, setSelectedID] = useState('');
+  //const idToKeyMap = '';
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -26,6 +33,13 @@ export default function HomePage() {
         const data = await response.json();
         const namesArray = data.map(item => item.id);
 
+        // dictionary for mapping champion names with champion ids (for Query)
+        const idToKeyMap = data.reduce((map, item) => {
+          map[item.id] = item.key;
+          return map;
+        }, {});
+
+        setIdToKeyMap(idToKeyMap);
         setOptions(namesArray);
         console.log(namesArray);
       } catch (error) {
@@ -40,6 +54,15 @@ export default function HomePage() {
   const handleSelect = (value) => {
     setSelectedOption(value);
     // Do something with the selected value
+    const champID = idToKeyMap[value];
+    setSelectedID(champID);
+  };
+
+  // when comps button is clicked, navigate to the composition query page and execute query
+  const navigate = useNavigate();
+  const handleButtonClick = () => {
+    //navigate("/comps", { state: { selectedChampion: selectedOption} });
+    navigate("/comps", { state: { selectedChampion: selectedOption, selectedKey: selectedID} });
   };
 
   return (
@@ -50,14 +73,13 @@ export default function HomePage() {
     }}>
       <div style={styles.overlay}>
         <div style={styles.container}>
-        <img src={leagueImg} alt="Description" style={styles.leagueIcon} />
+        <img src={leagueImg} alt="league logo" style={styles.leagueIcon} />
           <h1 style={{ fontFamily: "'leagueFont', sans-serif" }}>Welcome to League Simulator!</h1>
           <h2 style={{ color: '#C8AA6E', fontFamily: "'leagueFont', sans-serif" }}>Select your champion:</h2>
 
 
           <DropDown options={options} label="" onSelect={handleSelect} style={styles.champSelect} />
-          <p>Selected Option: {selectedOption}</p>
-          <button class="button">Find Best Team Comps</button>
+          <button className="button" onClick={handleButtonClick}>Find Best Team Comps</button>
         </div>
       </div>
     </div>
