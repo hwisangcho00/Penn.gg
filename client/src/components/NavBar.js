@@ -38,7 +38,7 @@ export default function NavBar() {
       <Container maxWidth='xl'>
         <Toolbar disableGutters>
           <NavText href='/' text='LeagueHelper' isMain />
-          <NavText href='/' text='Comps' />
+          <NavText href='/comps' text='Comps' />
           <NavText href='/' text='Stats' />
           <NavText href='/' text='Items' />
         </Toolbar>
