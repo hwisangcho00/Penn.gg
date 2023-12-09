@@ -25,7 +25,7 @@ export default function StatsPage() {
             position: 'relative'
         }}>
 
-            <Button variant="contained" onClick={() => handleButtonClick("/items")}>Insert More Routes Below</Button>
+            <Button variant="contained" onClick={() => handleButtonClick("/rangedChamp")}>Wins and Losses For Number of Ranged Champs</Button>
         </div>
 
 
