@@ -79,7 +79,7 @@ const getBestTeammate = async function(req, res) {
         GROUP BY ptn.champion_id)
       SELECT *
       FROM lanecount
-      WHERE lane = 'JUNGLE' AND count > 10 AND champion_id <> ${req.params.championId}
+      WHERE lane = '${req.params.lane}' AND count > 10 AND champion_id <> ${req.params.championId}
       ORDER BY win_probability DESC
       LIMIT 5;
   `, (err, data) => {
@@ -138,7 +138,7 @@ const getTopOpponentsByLane = async function(req, res) {
        GROUP BY pr.champion_id)
     SELECT *
     FROM lanecount
-    WHERE lane = 'TOP' AND count > 10 AND champion_id <> ${req.params.championId}
+    WHERE lane = '${req.params.lane}' AND count > 10 AND champion_id <> ${req.params.championId}
     ORDER BY win_probability DESC
     LIMIT 5;
   `, (err, data) => {
