@@ -31,108 +31,55 @@ function CompsPage() {
   const [midOpp, setMidOpp] = useState(null);
   const [botOpp, setBotOpp] = useState(null);
 
-  // Run 4 queries, for TOP, MIDDLE, BOTTOM, JUNGLE
   useEffect(() => {
-    fetch(`http://${config.server_host}:${config.server_port}/getBestTeammate/${selectedID}/TOP`)
-      .then(res => res.json())
-      .then(resJson => {
-        console.log("Output:")
-        console.log(resJson)
-        setTopRecs(resJson); // Update the state with the fetched data
-    })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-        setTopRecs(null); // Reset the state in case of an error
-      });
-
-      fetch(`http://${config.server_host}:${config.server_port}/getBestTeammate/${selectedID}/MIDDLE`)
-      .then(res => res.json())
-      .then(resJson => {
-        console.log("Output:")
-        console.log(resJson)
-        setMidRecs(resJson); // Update the state with the fetched data
-    })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-        setMidRecs(null); // Reset the state in case of an error
-      });
-
-      fetch(`http://${config.server_host}:${config.server_port}/getBestTeammate/${selectedID}/JUNGLE`)
-      .then(res => res.json())
-      .then(resJson => {
-        console.log("Output:")
-        console.log(resJson)
-        setJgRecs(resJson); // Update the state with the fetched data
-    })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-        setJgRecs(null); // Reset the state in case of an error
-      });
-
-      fetch(`http://${config.server_host}:${config.server_port}/getBestTeammate/${selectedID}/BOTTOM`)
-      .then(res => res.json())
-      .then(resJson => {
-        console.log("Output:")
-        console.log(resJson)
-        setBotRecs(resJson); // Update the state with the fetched data
-    })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-        setBotRecs(null); // Reset the state in case of an error
-      });
-
-      // now, fetch worst enemy selections
-      // TOP Lane Opp Champions first
-      fetch(`http://${config.server_host}:${config.server_port}/getTopOpponentsByLane/${selectedID}/TOP`)
-      .then(res => res.json())
-      .then(resJson => {
-        console.log("Output:")
-        console.log(resJson)
-        setTopOpp(resJson); // Update the state with the fetched data
-    })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-        setTopOpp(null); // Reset the state in case of an error
-      });
-
-      fetch(`http://${config.server_host}:${config.server_port}/getTopOpponentsByLane/${selectedID}/JUNGLE`)
-      .then(res => res.json())
-      .then(resJson => {
-        console.log("Output:")
-        console.log(resJson)
-        setJgOpp(resJson); // Update the state with the fetched data
-    })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-        setJgOpp(null); // Reset the state in case of an error
-      });
-
-      fetch(`http://${config.server_host}:${config.server_port}/getTopOpponentsByLane/${selectedID}/MIDDLE`)
-      .then(res => res.json())
-      .then(resJson => {
-        console.log("Output:")
-        console.log(resJson)
-        setMidOpp(resJson); // Update the state with the fetched data
-    })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-        setMidOpp(null); // Reset the state in case of an error
+    const abortController = new AbortController();
+    const signal = abortController.signal;
+  
+    const fetchURL = (lane) => {
+      return fetch(`http://${config.server_host}:${config.server_port}/getBestTeammate/${selectedID}/${lane}`, { signal })
+        .then(res => res.json())
+        .then(resJson => {
+          console.log("Output:", resJson);
+          if (lane === "TOP") setTopRecs(resJson);
+          else if (lane === "MIDDLE") setMidRecs(resJson);
+          else if (lane === "JUNGLE") setJgRecs(resJson);
+          else if (lane === "BOTTOM") setBotRecs(resJson);
+        })
+        .catch(error => {
+          if (error.name !== 'AbortError') {
+            console.error(`Error fetching data for lane ${lane}:`, error);
+          }
+        });
+    };
+  
+    const fetchOpponentURL = (lane) => {
+      return fetch(`http://${config.server_host}:${config.server_port}/getTopOpponentsByLane/${selectedID}/${lane}`, { signal })
+        .then(res => res.json())
+        .then(resJson => {
+          console.log("Output:", resJson);
+          if (lane === "TOP") setTopOpp(resJson);
+          else if (lane === "JUNGLE") setJgOpp(resJson);
+          else if (lane === "MIDDLE") setMidOpp(resJson);
+          else if (lane === "BOTTOM") setBotOpp(resJson);
+        })
+        .catch(error => {
+          if (error.name !== 'AbortError') {
+            console.error(`Error fetching opponent data for lane ${lane}:`, error);
+          }
+        });
+    };
+  
+    ["TOP", "MIDDLE", "JUNGLE", "BOTTOM"].forEach(lane => {
+      fetchURL(lane);
+      fetchOpponentURL(lane);
     });
-
-    fetch(`http://${config.server_host}:${config.server_port}/getTopOpponentsByLane/${selectedID}/BOTTOM`)
-      .then(res => res.json())
-      .then(resJson => {
-        console.log("Output:")
-        console.log(resJson)
-        setBotOpp(resJson); // Update the state with the fetched data
-    })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-        setBotOpp(null); // Reset the state in case of an error
-    });
-
-
+  
+    // Cleanup function to abort fetch on unmount or when selectedID changes
+    return () => {
+      abortController.abort();
+    };
   }, [selectedID]); // Dependency array includes selectedID to re-fetch when it changes
+  
   
 
   return (
@@ -153,7 +100,7 @@ function CompsPage() {
       <h2 style={{marginTop: '0px', fontSize: '40px', color: '#C8AA6E', fontFamily: 'leagueFont'}}>{selectedChampion} is best with...</h2>
       
       <div style={styles.tablesContainer}>
-        {topRecs && (
+        {topRecs && topRecs.length > 0 && (
             <table style={styles.table}>
               <thead>
                 <tr>
@@ -178,7 +125,7 @@ function CompsPage() {
             </table>
         )}
 
-        {jgRecs && (
+        {jgRecs && jgRecs.length > 0 && (
             <table style={styles.table}>
               <thead>
                 <tr>
@@ -205,7 +152,7 @@ function CompsPage() {
         </div>
 
         <div style={styles.tablesContainer}>
-        {midRecs && (
+        {midRecs && midRecs.length > 0 && (
             <table style={styles.table}>
               <thead>
                 <tr>
@@ -230,7 +177,7 @@ function CompsPage() {
             </table>
         )}
 
-    {botRecs && (
+    {botRecs && botRecs.length > 0 && (
             <table style={styles.table}>
               <thead>
                 <tr>
@@ -258,7 +205,7 @@ function CompsPage() {
         <h2 style={{marginTop: '100px', fontSize: '40px', color: '#C8AA6E', fontFamily: 'leagueFont'}}>{selectedChampion} loses more against...</h2>
 
         <div style={styles.tablesContainer}>
-        {topOpp && (
+        {topOpp && topOpp.length > 0 && (
             <table style={styles.table}>
               <thead>
                 <tr>
@@ -283,7 +230,7 @@ function CompsPage() {
             </table>
         )}
 
-        {jgOpp && (
+        {jgOpp && jgOpp.length > 0 && (
             <table style={styles.table}>
               <thead>
                 <tr>
@@ -310,7 +257,7 @@ function CompsPage() {
         </div>
 
         <div style={styles.tablesContainer}>
-        {midOpp && (
+        {midOpp && midOpp.length > 0 && (
             <table style={styles.table}>
               <thead>
                 <tr>
@@ -335,7 +282,7 @@ function CompsPage() {
             </table>
         )}
 
-        {botOpp && (
+        {botOpp && botOpp.length > 0 && (
             <table style={styles.table}>
               <thead>
                 <tr>
