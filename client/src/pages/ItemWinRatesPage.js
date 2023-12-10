@@ -8,7 +8,7 @@ const config = require('../config.json');
 
 export default function ItemWinRatesPage() {
 
-    const [champItemRecs, setChampItemRecs] = useState([{}]);
+    const [champItemRecs, setChampItemRecs] = useState([]);
 
 
     useEffect(() => {

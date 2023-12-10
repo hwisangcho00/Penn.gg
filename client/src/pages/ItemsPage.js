@@ -26,7 +26,7 @@ export default function StatsPage() {
         }}>
 
             <Button variant="contained" onClick={() => handleButtonClick("/champItemRecs")}>Get Item Recs for Champion</Button>
-            <Button variant="contained" onClick={() => handleButtonClick("/itemWinRates")}>Get Item Recs for Champion</Button>
+            <Button variant="contained" onClick={() => handleButtonClick("/itemWinRates")}>Get Item Win Rates</Button>
         </div>
 
 
