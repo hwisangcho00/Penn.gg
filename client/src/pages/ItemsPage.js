@@ -22,11 +22,16 @@ export default function StatsPage() {
             width: '100%', // Ensure the container spans the full width
             // If you need to ensure the container expands with its content:
             height: 'auto',
-            position: 'relative'
+            position: 'relative',
+            display: 'flex',
+            flexDirection: "column"
         }}>
-
-            <Button variant="contained" onClick={() => handleButtonClick("/champItemRecs")}>Get Item Recs for Champion</Button>
-            <Button variant="contained" onClick={() => handleButtonClick("/itemWinRates")}>Get Item Recs for Champion</Button>
+            <div>
+                <Button variant="contained" onClick={() => handleButtonClick("/champItemRecs")}>Get Item Recs for Champion</Button>
+            </div>
+            <div>
+                <Button variant="contained" onClick={() => handleButtonClick("/itemWinRates")}>See Item Winrates</Button>
+            </div>
         </div>
 
 
