@@ -38,7 +38,7 @@ export default function ItemWinRatesPage() {
             backgroundImage: `url(${backgroundImg})`,
             backgroundRepeat: 'repeat',
             backgroundSize: '1536px 864px', // Or specify a size like '100px 100px'
-            minHeight: '300vh',
+            minHeight: '1300vh',
             width: '100%', // Ensure the container spans the full width
             // If you need to ensure the container expands with its content:
             height: 'auto',
