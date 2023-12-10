@@ -38,8 +38,8 @@ export default function NavBar() {
       <Container maxWidth='xl'>
         <Toolbar disableGutters>
           <NavText href='/' text='LeagueHelper' isMain />
-          <NavText href='/' text='Stats' />
-          <NavText href='/' text='Items' />
+          <NavText href='/stats' text='Stats' />
+          <NavText href='/items' text='Items' />
         </Toolbar>
       </Container>
     </AppBar>
