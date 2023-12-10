@@ -100,7 +100,7 @@ function CompsPage() {
       <h2 style={{marginTop: '0px', fontSize: '40px', color: '#C8AA6E', fontFamily: 'leagueFont'}}>{selectedChampion} is best with...</h2>
       
       <div style={styles.tablesContainer}>
-        {topRecs && (
+        {topRecs && topRecs.length > 0 && (
             <table style={styles.table}>
               <thead>
                 <tr>
@@ -125,7 +125,7 @@ function CompsPage() {
             </table>
         )}
 
-        {jgRecs && (
+        {jgRecs && jgRecs.length > 0 && (
             <table style={styles.table}>
               <thead>
                 <tr>
@@ -152,7 +152,7 @@ function CompsPage() {
         </div>
 
         <div style={styles.tablesContainer}>
-        {midRecs && (
+        {midRecs && midRecs.length > 0 && (
             <table style={styles.table}>
               <thead>
                 <tr>
@@ -177,7 +177,7 @@ function CompsPage() {
             </table>
         )}
 
-    {botRecs && (
+    {botRecs && botRecs.length > 0 && (
             <table style={styles.table}>
               <thead>
                 <tr>
@@ -205,7 +205,7 @@ function CompsPage() {
         <h2 style={{marginTop: '100px', fontSize: '40px', color: '#C8AA6E', fontFamily: 'leagueFont'}}>{selectedChampion} loses more against...</h2>
 
         <div style={styles.tablesContainer}>
-        {topOpp && (
+        {topOpp && topOpp.length > 0 && (
             <table style={styles.table}>
               <thead>
                 <tr>
@@ -230,7 +230,7 @@ function CompsPage() {
             </table>
         )}
 
-        {jgOpp && (
+        {jgOpp && jgOpp.length > 0 && (
             <table style={styles.table}>
               <thead>
                 <tr>
@@ -257,7 +257,7 @@ function CompsPage() {
         </div>
 
         <div style={styles.tablesContainer}>
-        {midOpp && (
+        {midOpp && midOpp.length > 0 && (
             <table style={styles.table}>
               <thead>
                 <tr>
@@ -282,7 +282,7 @@ function CompsPage() {
             </table>
         )}
 
-        {botOpp && (
+        {botOpp && botOpp.length > 0 && (
             <table style={styles.table}>
               <thead>
                 <tr>
