@@ -1,6 +1,7 @@
 import { AppBar, Container, Toolbar, Typography } from '@mui/material'
 import { NavLink } from 'react-router-dom';
 import '../index.css';
+import leagueImg from '../images/league.ico';
 
 // The hyperlinks in the NavBar contain a lot of repeated formatting code so a
 // helper component NavText local to the file is defined to prevent repeated code.
@@ -37,6 +38,7 @@ export default function NavBar() {
     <AppBar position='static' sx={{ backgroundColor: '#091428' }}>
       <Container maxWidth='xl'>
         <Toolbar disableGutters>
+        <img src={leagueImg} alt="league logo" style={{width: '35px', marginRight: '10px'}}/>
           <NavText href='/' text='Penn.gg' isMain />
           <NavText href='/stats' text='Champions' />
           <NavText href='/items' text='Items' />

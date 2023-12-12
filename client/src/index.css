@@ -1,3 +1,7 @@
+body {
+  background-color: #0A323C;
+}
+
 @font-face {
     font-family: 'leagueFont';
     src: local('leagueFont'), url('fonts/BeaufortforLOL-Bold.otf') format('opentype');

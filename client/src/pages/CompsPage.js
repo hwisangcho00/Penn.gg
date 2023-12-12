@@ -330,7 +330,7 @@ const styles = {
     //for background
     overlay: {
         position: 'absolute', // Position absolutely within the relative parent
-        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent white
+        backgroundColor: 'rgba(0, 0, 0, 0.6)', // Semi-transparent white
         top: 0,
         left: 0,
         right: 0,

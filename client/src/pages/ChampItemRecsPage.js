@@ -2,6 +2,8 @@ import DropDown from '../components/DropDown';
 import { useEffect, useState } from 'react';
 import backgroundImg from '../images/summoners_rift.png';
 import { Button } from '@mui/material';
+import ReactLoading from "react-loading";
+import '../index.css';
 
 const config = require('../config.json');
 
@@ -13,26 +15,25 @@ export default function ChampItemRecsPage() {
     const [selectedOption, setSelectedOption] = useState('');
     const [idToKeyMap, setIdToKeyMap] = useState({});
     const [selectedID, setSelectedID] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
 
     useEffect(() => {
+        setIsLoading(true); // Start loading
+    
         const fetchData = async () => {
             try {
                 const response = await fetch('./riot_champion.json');
-
                 if (!response.ok) {
                     throw new Error(`Failed to load JSON file: ${response.status} ${response.statusText}`);
                 }
-
                 const data = await response.json();
                 const namesArray = data.map(item => item.id);
-
-                // dictionary for mapping champion names with champion ids (for Query)
                 const idToKeyMap = data.reduce((map, item) => {
                     map[item.id] = item.key;
                     return map;
                 }, {});
-
+    
                 setIdToKeyMap(idToKeyMap);
                 setOptions(namesArray);
                 console.log(namesArray);
@@ -40,25 +41,25 @@ export default function ChampItemRecsPage() {
                 console.error('Error:', error.message);
             }
         };
-        
+    
         const queryChampItemRecs = async () => {
-            fetch(`http://${config.server_host}:${config.server_port}/getItemRecommendation/${selectedID}`)
-                .then(res => res.json())
-                .then(resJson => {
-                    console.log("Output:")
-                    console.log(resJson)
-                    setChampItemRecs(resJson); // Update the state with the fetched data
-                })
-                .catch(error => {
-                    console.error('Error fetching data:', error);
-                    setChampItemRecs(null); // Reset the state in case of an error
-                });
-        }
-
-        fetchData();
-        queryChampItemRecs();
-
-    }, [selectedID])
+            try {
+                const res = await fetch(`http://${config.server_host}:${config.server_port}/getItemRecommendation/${selectedID}`);
+                const resJson = await res.json();
+                console.log("Output:", resJson);
+                setChampItemRecs(resJson);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                setChampItemRecs(null);
+            }
+        };
+    
+        Promise.all([fetchData(), queryChampItemRecs()]).finally(() => {
+            setIsLoading(false); // Stop loading once both data are fetched
+        });
+    
+    }, [selectedID]);
+    
 
 
     const handleSelect = (value) => {
@@ -69,17 +70,7 @@ export default function ChampItemRecsPage() {
     };
 
     return (
-        <div style={{
-            backgroundImage: `url(${backgroundImg})`,
-            backgroundRepeat: 'repeat',
-            backgroundSize: '1536px 864px', // Or specify a size like '100px 100px'
-            minHeight: '300vh',
-            width: '100%', // Ensure the container spans the full width
-            // If you need to ensure the container expands with its content:
-            height: 'auto',
-            position: 'relative'
-        }}>
-            <div style={styles.overlay}>
+        <div style={styles.backgroundImageStyle}>
             <div style={styles.container}>
 
             <h2 style={{ marginTop: '0px', fontSize: '40px', color: '#C8AA6E', fontFamily: 'leagueFont' }}>Choose your champion!</h2>
@@ -88,7 +79,12 @@ export default function ChampItemRecsPage() {
             </div>
             <h2 style={{ fontSize: '70px', marginTop: '40px', color: '#C8AA6E', fontFamily: 'leagueFont' }}>{selectedOption || 'None'}</h2>
             <h2 style={{ marginTop: '0px', fontSize: '40px', color: '#C8AA6E', fontFamily: 'leagueFont' }}>{selectedOption} is best with...</h2>
-            <div style={styles.tablesContainer}>
+            
+            {isLoading ? (
+                <ReactLoading type={"bubbles"} color="#C8AA6E" />
+                ) : (
+                
+                    <div style={styles.tablesContainer}>
                 {champItemRecs && (
                     <table style={styles.table}>
                         <thead>
@@ -112,8 +108,8 @@ export default function ChampItemRecsPage() {
                     </table>
                 )}
             </div>
+            )}
 
-        </div>
         </div>
         </div>
 
@@ -123,24 +119,36 @@ export default function ChampItemRecsPage() {
 
 const styles = {
     container: {
-        paddingTop: '200px',
-
+        paddingTop: '100px',
+        height: 'auto',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        position: 'relative'
+        backgroundImage: backgroundImg,
+        backgroundRepeat: 'repeat',
       },
 
     //for background
-    overlay: {
-        position: 'absolute', // Position absolutely within the relative parent
-        backgroundColor: 'rgba(0, 0, 0, 0.6)', // Semi-transparent white
+    backgroundImageStyle : {
+        backgroundImage: `url(${backgroundImg}), linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6))`,
+        backgroundRepeat: 'repeat-y',
+        backgroundSize: 'cover',
+        backgroundBlendMode: 'overlay', // Blend the image and the gradient
+        minHeight: '100vh',
+        width: '100%',
+        height: 'auto',
+        position: 'relative',
+    },
+    
+    // Overlay style
+    overlayStyle : {
+        position: 'absolute', // Overlay is absolutely positioned within the relative parent
         top: 0,
         left: 0,
         right: 0,
         bottom: 0,
-        // Add your existing overlay styles here (like background color, opacity, etc.)
+        backgroundColor: 'rgba(0, 0, 0, 0.6)', // Adjust the color and opacity as needed
     },
 
     // champion image
