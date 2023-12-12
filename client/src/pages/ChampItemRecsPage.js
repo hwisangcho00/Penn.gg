@@ -78,9 +78,15 @@ export default function ChampItemRecsPage() {
             // If you need to ensure the container expands with its content:
             height: 'auto',
             position: 'relative'
-        }}><h2 style={{ marginTop: '0px', fontSize: '40px', color: '#C8AA6E', fontFamily: 'leagueFont' }}>Choose your champion!</h2>
-            <DropDown options={options} label="" onSelect={handleSelect} style={styles.champSelect} />
-            <h2 style={{ fontSize: '70px', marginTop: '0px', color: '#C8AA6E', fontFamily: 'leagueFont' }}>{selectedOption || 'None'}</h2>
+        }}>
+            <div style={styles.overlay}>
+            <div style={styles.container}>
+
+            <h2 style={{ marginTop: '0px', fontSize: '40px', color: '#C8AA6E', fontFamily: 'leagueFont' }}>Choose your champion!</h2>
+            <div style={{width: '500px'}}>
+            <DropDown options={options} label="" onSelect={handleSelect} style={{ ...styles.champSelect, width: '50%' }} />
+            </div>
+            <h2 style={{ fontSize: '70px', marginTop: '40px', color: '#C8AA6E', fontFamily: 'leagueFont' }}>{selectedOption || 'None'}</h2>
             <h2 style={{ marginTop: '0px', fontSize: '40px', color: '#C8AA6E', fontFamily: 'leagueFont' }}>{selectedOption} is best with...</h2>
             <div style={styles.tablesContainer}>
                 {champItemRecs && (
@@ -108,6 +114,8 @@ export default function ChampItemRecsPage() {
             </div>
 
         </div>
+        </div>
+        </div>
 
     )
 
@@ -116,18 +124,18 @@ export default function ChampItemRecsPage() {
 const styles = {
     container: {
         paddingTop: '300px',
-        height: '100vh',
+        height: '250vh',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
         position: 'relative'
-    },
+      },
 
     //for background
     overlay: {
         position: 'absolute', // Position absolutely within the relative parent
-        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent white
+        backgroundColor: 'rgba(0, 0, 0, 0.6)', // Semi-transparent white
         top: 0,
         left: 0,
         right: 0,

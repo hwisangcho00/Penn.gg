@@ -18,7 +18,7 @@ export default function StatsPage() {
             backgroundImage: `url(${backgroundImg})`,
             backgroundRepeat: 'repeat',
             backgroundSize: '1536px 864px', // Or specify a size like '100px 100px'
-            minHeight: '300vh',
+            minHeight: '100vh',
             width: '100%', // Ensure the container spans the full width
             // If you need to ensure the container expands with its content:
             height: 'auto',
@@ -26,13 +26,21 @@ export default function StatsPage() {
             display: 'flex',
             flexDirection: "column"
         }}>
-            <div>
-                <Button variant="contained" onClick={() => handleButtonClick("/champItemRecs")}>Get Item Recs for Champion</Button>
-            </div>
-            <div>
-                <Button variant="contained" onClick={() => handleButtonClick("/itemWinRates")}>See Item Winrates</Button>
-            </div>
+            <div style={styles.overlay}>
+      <div style={styles.container}>
+        <div>
+          <h1 style={{ fontSize: '90px', textAlign: 'center' }}>Item Stats</h1>
+          <p style={{ fontSize: '25px', textAlign: 'center' }}>Find individual item stats, and get item recommendations for selected champion.</p>
         </div>
+        <div>
+        <button className="button" onClick={() => handleButtonClick("/champItemRecs")}>Get Item Recs for Champion</button>
+        </div>
+        <div>
+        <button className="button" onClick={() => handleButtonClick("/itemWinRates")}>See Item Winrates</button>
+        </div>
+      </div>
+    </div>
+    </div>
 
 
     )
@@ -42,7 +50,7 @@ export default function StatsPage() {
 const styles = {
     container: {
         paddingTop: '300px',
-        height: '100vh',
+        height: '30vh',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
@@ -53,7 +61,7 @@ const styles = {
     //for background
     overlay: {
         position: 'absolute', // Position absolutely within the relative parent
-        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent white
+        backgroundColor: 'rgba(0, 0, 0, 0.6)', // Semi-transparent white
         top: 0,
         left: 0,
         right: 0,
