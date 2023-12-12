@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "cdragon-dd": "^2.0.8"
+    "cdragon-dd": "^2.0.8",
+    "react-loading": "^2.0.3"
   }
 }
