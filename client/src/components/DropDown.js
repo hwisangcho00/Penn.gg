@@ -17,7 +17,14 @@ function DropDown({ options, label, onSelect }) {
         value={selectedOption}
         onChange={handleChange}
         label={label}
-        sx={{ backgroundColor: 'white' }}
+        sx={{
+          color: '#C8AA6E', // Font color
+          fontSize: '30px',
+          textAlign: 'center',
+          backgroundColor: '#010A13',
+          fontFamily: 'leagueFont',
+          borderColor: '#C8AA6E',
+        }}
       >
         <MenuItem value="">
           <em>None</em>

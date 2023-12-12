@@ -71,16 +71,15 @@ export default function DataForChampionPage() {
     return (
         <div style={{
             backgroundImage: `url(${backgroundImg})`,
-            backgroundRepeat: 'repeat',
-            backgroundSize: '1536px 864px', // Or specify a size like '100px 100px'
-            minHeight: '300vh',
-            width: '100%', // Ensure the container spans the full width
-            // If you need to ensure the container expands with its content:
-            height: 'auto',
-            position: 'relative'
-        }}><h2 style={{ marginTop: '0px', fontSize: '40px', color: '#C8AA6E', fontFamily: 'leagueFont' }}>Choose your champion!</h2>
-            <DropDown options={options} label="" onSelect={handleSelect} style={styles.champSelect} />
-            <h2 style={{ fontSize: '70px', marginTop: '0px', color: '#C8AA6E', fontFamily: 'leagueFont' }}>{selectedOption || 'None'}</h2>
+      backgroundSize: 'cover',
+      minHeight: '100vh'
+        }}>
+            <div style={styles.overlay}>
+            <div style={styles.container}>
+
+            <h2 style={{ marginTop: '0px', fontSize: '40px', color: '#C8AA6E', fontFamily: 'leagueFont' }}>Choose your champion!</h2>
+            <DropDown options={options} label="" onSelect={handleSelect} style={{ ...styles.champSelect, width: '50%' }} />
+            <h2 style={{ fontSize: '70px', marginTop: '40px', color: '#C8AA6E', fontFamily: 'leagueFont' }}>{selectedOption || 'None'}</h2>
             <h2 style={{ marginTop: '0px', fontSize: '40px', color: '#C8AA6E', fontFamily: 'leagueFont' }}>{selectedOption} has the following stats:</h2>
             <div style={styles.tablesContainer}>
                 {champItemRecs && (
@@ -107,44 +106,51 @@ export default function DataForChampionPage() {
                 )}
             </div>
 
+            </div>
+            </div>
+
         </div>
 
     )
 
 }
 
+// Updated Styles
 const styles = {
     container: {
-        paddingTop: '300px',
-        height: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        position: 'relative'
+      height: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center', 
+      alignItems: 'center', 
     },
-
+    leagueIcon: {
+      marginTop: '0px', 
+      maxWidth: '200px', 
+      height: 'auto', 
+    },
+    // place the images side by side
+    imagesRow: {
+      display: 'flex',    
+      justifyContent: 'center', 
+      alignItems: 'center',
+    },
+  
     //for background
     overlay: {
-        position: 'absolute', // Position absolutely within the relative parent
-        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent white
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        // Add your existing overlay styles here (like background color, opacity, etc.)
+      backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent white
+      minHeight: '100vh', // Full viewport height
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
     },
-
-    // champion image
-    championImage: {
-        paddingTop: '1200px',
-        display: 'block', // to enable margin auto
-        marginLeft: 'auto', // center the image
-        marginRight: 'auto', // center the image
-        width: '150px',
-        height: 'auto',
+  
+    //champion selection dropdown
+    champSelect: {
+      marginTop: '50px',
     },
-
+    
+    // table formatting
     table: {
         textAlign: 'center',
         fontSize: '20px',
@@ -154,13 +160,12 @@ const styles = {
         color: '#C8AA6E',
         border: '1px solid #C8AA6E',
         borderSpacing: '40px 0px'
-    },
-
-    tablesContainer: {
+      },
+    
+      tablesContainer: {
         display: 'flex',     // Enable Flexbox
         justifyContent: 'space-around', // This will space out the tables evenly
         alignItems: 'flex-start', // Aligns tables to the top of the container
         // You can adjust padding and margin as needed
-    },
-
-};
+      },
+  };

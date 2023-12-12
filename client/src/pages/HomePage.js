@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 // basic imports
 import leagueImg from '../images/league.ico';
+import pennImg from '../images/penngg.png';
 import backgroundImg from '../images/summoners_rift.png';
 import DropDown from '../components/DropDown';
 import '../index.css';
@@ -73,8 +74,11 @@ export default function HomePage() {
     }}>
       <div style={styles.overlay}>
         <div style={styles.container}>
-        <img src={leagueImg} alt="league logo" style={styles.leagueIcon} />
-          <h1 style={{ fontFamily: "'leagueFont', sans-serif" }}>Welcome to League Simulator!</h1>
+        <div style={styles.imagesRow}>
+      <img src={leagueImg} alt="league logo" style={styles.leagueIcon} />
+      <img src={pennImg} alt="league logo" style={styles.leagueIcon} />
+    </div>
+          <h1 style={{ fontFamily: "'leagueFont', sans-serif" }}>Welcome to Penn.gg!</h1>
           <h2 style={{ color: '#C8AA6E', fontFamily: "'leagueFont', sans-serif" }}>Select your champion:</h2>
           <DropDown options={options} label="" onSelect={handleSelect} style={styles.champSelect} />
           <button className="button" onClick={handleButtonClick}>Find Best Team Comps</button>
@@ -97,6 +101,12 @@ const styles = {
     marginTop: '0px', 
     maxWidth: '200px', 
     height: 'auto', 
+  },
+  // place the images side by side
+  imagesRow: {
+    display: 'flex',    
+    justifyContent: 'center', 
+    alignItems: 'center',
   },
 
   //for background

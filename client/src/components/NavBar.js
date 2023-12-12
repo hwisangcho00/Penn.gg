@@ -37,8 +37,8 @@ export default function NavBar() {
     <AppBar position='static' sx={{ backgroundColor: '#091428' }}>
       <Container maxWidth='xl'>
         <Toolbar disableGutters>
-          <NavText href='/' text='LeagueHelper' isMain />
-          <NavText href='/stats' text='Stats' />
+          <NavText href='/' text='Penn.gg' isMain />
+          <NavText href='/stats' text='Champions' />
           <NavText href='/items' text='Items' />
         </Toolbar>
       </Container>

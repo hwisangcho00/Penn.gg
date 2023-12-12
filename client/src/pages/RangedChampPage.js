@@ -53,12 +53,14 @@ export default function RangedChampPage() {
             backgroundImage: `url(${backgroundImg})`,
             backgroundRepeat: 'repeat',
             backgroundSize: '1536px 864px', // Or specify a size like '100px 100px'
-            minHeight: '300vh',
+            minHeight: '100vh',
             width: '100%', // Ensure the container spans the full width
             // If you need to ensure the container expands with its content:
             height: 'auto',
             position: 'relative'
         }}>
+            <div style={styles.overlay}>
+            <div style={styles.container}>
             <h2 style={{ marginTop: '0px', fontSize: '40px', color: '#C8AA6E', fontFamily: 'leagueFont' }}>How Ranged Champs Affect Winrate</h2>
             <div style={styles.tablesContainer}>
                 {rangedChampData && (
@@ -84,6 +86,11 @@ export default function RangedChampPage() {
                     </table>
                 )}
             </div>
+            </div>
+
+            </div>
+
+            
 
         </div>
 
@@ -94,7 +101,7 @@ export default function RangedChampPage() {
 const styles = {
     container: {
         paddingTop: '300px',
-        height: '100vh',
+        height: '40vh',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',

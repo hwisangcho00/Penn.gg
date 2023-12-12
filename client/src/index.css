@@ -11,6 +11,17 @@
   h1 {
     color: #C8AA6E;
     font-size: 300%;
+    font-family: 'leagueFont';
+    justify-content: center;
+    align-content: center;
+  }
+
+  p {
+    color: #C8AA6E;
+    font-size: 100%;
+    font-family: 'leagueFont';
+    justify-content: center;
+    align-content: center;
   }
 
   .button {

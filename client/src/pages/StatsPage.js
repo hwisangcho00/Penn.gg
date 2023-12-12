@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import backgroundImg from '../images/summoners_rift.png';
 import { Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import '../index.css';
 const config = require('../config.json');
 
 
@@ -18,20 +19,28 @@ export default function StatsPage() {
       backgroundImage: `url(${backgroundImg})`,
       backgroundRepeat: 'repeat',
       backgroundSize: '1536px 864px', // Or specify a size like '100px 100px'
-      minHeight: '300vh',
+      minHeight: '100vh',
       width: '100%', // Ensure the container spans the full width
       // If you need to ensure the container expands with its content:
       height: 'auto',
       position: 'relative',
       display: 'flex',
-      flexDirection: "column"
+      flexDirection: "column",
     }}>
-      <div>
-        <Button variant="contained" onClick={() => handleButtonClick("/rangedChamp")}>Wins and Losses For Number of Ranged Champs</Button>
+      <div style={styles.overlay}>
+      <div style={styles.container}>
+        <div>
+          <h1 style={{ fontSize: '90px', textAlign: 'center' }}>Champion Stats</h1>
+          <p style={{ fontSize: '25px', textAlign: 'center' }}>Find different statistics of individual champions.</p>
+        </div>
+        <div>
+        <button className="button" onClick={() => handleButtonClick("/rangedChamp")}>Wins and Losses For Number of Ranged Champs</button>
+        </div>
+        <div>
+        <button className="button" onClick={() => handleButtonClick("/dataForChampion")}>Individual Champion Stats</button>
+        </div>
       </div>
-      <div>
-        <Button variant="contained" onClick={() => handleButtonClick("/dataForChampion")}>Stats About a Champion</Button>
-      </div>
+    </div>
     </div>
 
 
@@ -42,7 +51,7 @@ export default function StatsPage() {
 const styles = {
   container: {
     paddingTop: '300px',
-    height: '100vh',
+    height: '20vh',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
@@ -53,7 +62,7 @@ const styles = {
   //for background
   overlay: {
     position: 'absolute', // Position absolutely within the relative parent
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent white
+    backgroundColor: 'rgba(0, 0, 0, 0.6)', // Semi-transparent white
     top: 0,
     left: 0,
     right: 0,
