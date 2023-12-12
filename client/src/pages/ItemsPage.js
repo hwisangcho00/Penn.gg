@@ -17,7 +17,7 @@ export default function StatsPage() {
         <div style={{
             backgroundImage: `url(${backgroundImg})`,
             backgroundRepeat: 'repeat',
-            backgroundSize: '1536px 864px', // Or specify a size like '100px 100px'
+            backgroundSize: 'cover', // Or specify a size like '100px 100px'
             minHeight: '100vh',
             width: '100%', // Ensure the container spans the full width
             // If you need to ensure the container expands with its content:
