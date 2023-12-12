@@ -71,7 +71,7 @@ export default function ChampItemRecsPage() {
     return (
         <div style={{
             backgroundImage: `url(${backgroundImg})`,
-            backgroundRepeat: 'repeat',
+            backgroundRepeat: 'cover',
             backgroundSize: '1536px 864px', // Or specify a size like '100px 100px'
             minHeight: '300vh',
             width: '100%', // Ensure the container spans the full width
@@ -123,8 +123,7 @@ export default function ChampItemRecsPage() {
 
 const styles = {
     container: {
-        paddingTop: '300px',
-        height: '250vh',
+        paddingTop: '200px',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
