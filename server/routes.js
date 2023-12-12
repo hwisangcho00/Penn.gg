@@ -45,43 +45,43 @@ const getBestTeammate = async function(req, res) {
   
 
   connection.query(`
-    WITH champ_games AS (select game_id as gamenum, team_id as teamnum
-    from Player
-    where champion_id = ${req.params.championId}),
-    team_champs as (select *
-    from Player p join champ_games c on p.team_id = c.teamnum and p.game_id = c.gamenum),
-    prob_table as (SELECT champion_id, SUM(win) as wins, COUNT(*) as total_games,
-          SUM(win) / COUNT(*) AS win_probability
-    FROM team_champs
-    GROUP BY champion_id),
-    probs as (
-    select p.*, C.champion_name
-    from prob_table p join Champion C on p.champion_id = C.champion_id
-    order by win_probability desc),
-    lanecount as (
-       select
-           pr.champion_id,
-           pr.champion_name,
-           pr.win_probability,
-           lc.lane,
-           lc.count
-       from probs pr
-       join (
-           select
-               champion_id,
-               timeline_lane as lane,
-               count(*) as count
-           from team_champs
-           where timeline_lane <> 'NONE'
-           group by champion_id, timeline_lane
-           order by champion_id, count(*) desc
-       ) lc on pr.champion_id = lc.champion_id
-       group by pr.champion_id)
-    select *
-    from lanecount
-    where lane = '${req.params.lane}' and count > 10 and champion_id <> ${req.params.championId}
-    order by win_probability desc
-    limit 5;
+    WITH champ_games AS (SELECT game_id AS gamenum, team_id AS teamnum
+      FROM Player
+      WHERE champion_id = ${req.params.championId}),
+  team_champs AS (SELECT champion_id, win, timeline_lane
+      FROM Player p JOIN champ_games c ON p.team_id = c.teamnum AND p.game_id = c.gamenum),
+  prob_table AS (SELECT champion_id, SUM(win) AS wins, COUNT(*) AS total_games,
+      SUM(win) / COUNT(*) AS win_probability
+      FROM team_champs
+      GROUP BY champion_id
+      ORDER BY win_probability DESC),
+  prob_table_name AS (
+      SELECT p.*, C.champion_name
+      FROM prob_table p JOIN Champion C ON p.champion_id = C.champion_id
+      ),
+  lanecount AS (
+    SELECT ptn.champion_id,
+            ptn.champion_name,
+            ptn.win_probability,
+            lc.lane,
+            lc.count
+    FROM prob_table_name ptn
+    JOIN (
+        SELECT
+            champion_id,
+            timeline_lane as lane,
+            count(*) as count
+        FROM team_champs
+        WHERE timeline_lane <> 'NONE'
+        GROUP BY champion_id, timeline_lane
+        ORDER BY champion_id, count(*) DESC
+    ) lc ON ptn.champion_id = lc.champion_id
+    GROUP BY ptn.champion_id)
+  SELECT *
+  FROM lanecount
+  WHERE lane = '${req.params.lane}' AND count > 10 AND champion_id <> ${req.params.championId}
+  ORDER BY win_probability DESC
+  LIMIT 5;
   `, (err, data) => {
     if (err || data.length === 0) {
       console.log(err);
@@ -103,43 +103,44 @@ const getBestTeammate = async function(req, res) {
  */
 const getTopOpponentsByLane = async function(req, res) {
   connection.query(`
-    with champ_games as (select game_id as gamenum, team_id as teamnum
-      from Player
-      where champion_id = ${req.params.championId}),
-      op_champs as (select *
-      from Player p join champ_games c on p.team_id <> c.teamnum and p.game_id = c.gamenum),
-        prob_table as (SELECT champion_id, SUM(win) as wins, COUNT(*) as total_games,
-            SUM(win) / COUNT(*) AS win_probability
-      FROM op_champs
-      GROUP BY champion_id),
-      probs as (
-      select p.*, C.champion_name
-      from prob_table p join Champion C on p.champion_id = C.champion_id
-      order by win_probability desc),
-      lanecount as (
-        select
-            pr.champion_id,
-            pr.champion_name,
-            pr.win_probability,
-            lc.lane,
-            lc.count
-        from probs pr
-        join (
-            select
-                champion_id,
-                timeline_lane as lane,
-                count(*) as count
-            from op_champs
-            where timeline_lane <> 'NONE'
-            group by champion_id, timeline_lane
-            order by champion_id, count(*) desc
-        ) lc on pr.champion_id = lc.champion_id
-        group by pr.champion_id)
-      select *
-      from lanecount
-      where lane = '${req.params.lane}' and count > 10 and champion_id <> ${req.params.championId}
-      order by win_probability desc
-      limit 5;
+  WITH champ_games AS (SELECT game_id AS gamenum, team_id AS teamnum
+    FROM Player
+    WHERE champion_id = ${req.params.championId}),
+    op_champs AS (SELECT champion_id, win, timeline_lane
+    FROM Player p JOIN champ_games c ON p.team_id <> c.teamnum AND p.game_id = c.gamenum),
+       prob_table AS (SELECT champion_id, SUM(win) AS wins, COUNT(*) AS total_games,
+          SUM(win) / COUNT(*) AS win_probability
+    FROM op_champs
+    GROUP BY champion_id
+    ORDER BY win_probability DESC),
+    probs AS (
+    SELECT p.*, C.champion_name
+    FROM prob_table p JOIN Champion C ON p.champion_id = C.champion_id
+    ),
+    lanecount AS (
+       SELECT
+           pr.champion_id,
+           pr.champion_name,
+           pr.win_probability,
+           lc.lane,
+           lc.count
+       FROM probs pr
+       JOIN (
+           SELECT
+               champion_id,
+               timeline_lane AS lane,
+               count(*) AS count
+           FROM op_champs
+           WHERE timeline_lane <> 'NONE'
+           GROUP BY champion_id, timeline_lane
+           ORDER BY champion_id, count(*) DESC
+       ) lc ON pr.champion_id = lc.champion_id
+       GROUP BY pr.champion_id)
+    SELECT *
+    FROM lanecount
+    WHERE lane = '${req.params.lane}' AND count > 10 AND champion_id <> ${req.params.championId}
+    ORDER BY win_probability DESC
+    LIMIT 5;
   `, (err, data) => {
     if (err || data.length === 0) {
       console.log(err);
