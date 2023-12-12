@@ -38,13 +38,16 @@ export default function ItemWinRatesPage() {
             backgroundImage: `url(${backgroundImg})`,
             backgroundRepeat: 'repeat',
             backgroundSize: '1536px 864px', // Or specify a size like '100px 100px'
-            minHeight: '300vh',
+            minHeight: '1300vh',
             width: '100%', // Ensure the container spans the full width
             // If you need to ensure the container expands with its content:
             height: 'auto',
             position: 'relative'
         }}>
-            <h2 style={{ marginTop: '0px', fontSize: '40px', color: '#C8AA6E', fontFamily: 'leagueFont' }}>Item Recs Based On Winrate</h2>
+             <div style={styles.overlay}>
+                <div style={styles.container}>
+                <h2 style={{ marginTop: '0px', fontSize: '50px', color: '#C8AA6E', fontFamily: 'leagueFont' }}>Item Recs Based On Winrate</h2>
+                </div>
             <div style={styles.tablesContainer}>
                 {champItemRecs && (
                     <table style={styles.table}>
@@ -68,6 +71,7 @@ export default function ItemWinRatesPage() {
                 )}
             </div>
 
+             </div>
         </div>
 
     )
@@ -76,8 +80,8 @@ export default function ItemWinRatesPage() {
 
 const styles = {
     container: {
-        paddingTop: '300px',
-        height: '100vh',
+        paddingTop: '100px',
+        height: '100px',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
@@ -118,6 +122,7 @@ const styles = {
     },
 
     tablesContainer: {
+        marginTop: '30px',
         display: 'flex',     // Enable Flexbox
         justifyContent: 'space-around', // This will space out the tables evenly
         alignItems: 'flex-start', // Aligns tables to the top of the container
