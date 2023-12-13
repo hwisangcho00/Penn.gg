@@ -204,7 +204,7 @@ const getItemRecommendation = async function(req, res) {
 }
 
 /**
- * GET : /teamCombination/:team1/:team2/:team3/:team4
+ * GET : /teamCombination/:team1/:team2/:team3/:team4/:team5
  * 
  * Query 4.	Retrieve the number of games won and lost when five specific champions are played together on the same team.
  * 
@@ -218,7 +218,7 @@ const getTeamCombination = async function(req, res) {
     FROM
       Player p
     WHERE
-      p.champion_id IN (${req.params.team1}, ${req.params.team2},${req.params.team3}, ${req.params.team4})
+      p.champion_id IN (${req.params.team1}, ${req.params.team2},${req.params.team3}, ${req.params.team4}, ${req.params.team5})
     GROUP BY
       p.game_id, p.team_id
     HAVING

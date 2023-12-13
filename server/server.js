@@ -24,7 +24,7 @@ app.get('/random', routes.random);
 app.get('/getBestTeammate/:championId/:lane', routes.getBestTeammate);
 app.get('/getTopOpponentsByLane/:championId/:lane', routes.getTopOpponentsByLane);
 app.get('/getItemRecommendation/:championId', routes.getItemRecommendation);
-app.get('/getTeamCombination/:team1/:team2/:team3/:team4', routes.getTeamCombination);
+app.get('/getTeamCombination/:team1/:team2/:team3/:team4/:team5', routes.getTeamCombination);
 app.get('/getWinrateChampion/:championId', routes.winrate_champion);
 app.get('/getWinrateItem', routes.winrate_item);
 app.get('/getPickrateChampion/:championId', routes.pickrate_champion);
