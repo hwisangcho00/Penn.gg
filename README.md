@@ -2,6 +2,21 @@
 
 <img width="1493" alt="image" src="https://github.com/hwisangcho00/CIS-4500_League_Simulator/assets/43479778/bb209e6c-6283-4f48-80c0-43ae55d17518">
 
+## How to Run
+Open two terminals, one for the client and one for the server. Then, execute the following commands.
+
+Server terminal:
+```
+cd server
+npm install
+npm start
+```
+Client terminal:
+```
+cd client
+npm install
+npm start
+```
 
 ## What is League Simulator?
 * League of Legends is a competitive 5v5 video game where players form teams of five
