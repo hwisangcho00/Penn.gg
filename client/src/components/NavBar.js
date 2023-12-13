@@ -40,6 +40,7 @@ export default function NavBar() {
           <NavText href='/' text='Penn.gg' isMain />
           <NavText href='/stats' text='Champions' />
           <NavText href='/items' text='Items' />
+          <NavText href='/statWinRates' text='Stats'/>
         </Toolbar>
       </Container>
     </AppBar>
