@@ -211,18 +211,13 @@ const getItemRecommendation = async function(req, res) {
  */
 const getTeamCombination = async function(req, res) {
   connection.query(`
-    SELECT
-    COUNT(*) AS total_games,
-    SUM(win) AS wins,
-    (COUNT(*) - SUM(win)) AS losses
-    FROM
-      Player p
-    WHERE
-      p.champion_id IN (${req.params.team1}, ${req.params.team2},${req.params.team3}, ${req.params.team4}, ${req.params.team5})
-    GROUP BY
-      p.game_id, p.team_id
-    HAVING
-      COUNT(DISTINCT p.champion_id) = 5;
+    SELECT COUNT(*) as total_games, SUM(win) as wins, (COUNT(*) - SUM(win)) AS losses
+    FROM PlayerPerTeam ppt
+    WHERE ppt.concatId LIKE "%@${req.params.team1}@%" AND
+    ppt.concatId LIKE "%@${req.params.team2}@%" AND
+    ppt.concatId LIKE "%@${req.params.team3}@%" AND
+    ppt.concatId LIKE "%@${req.params.team4}@%" AND
+    ppt.concatId LIKE "%@${req.params.team5}@%";
     `, (err, data) => {
       if (err || data.length === 0) {
         console.log(err);
