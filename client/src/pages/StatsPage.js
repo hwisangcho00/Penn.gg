@@ -39,6 +39,15 @@ export default function StatsPage() {
         <div>
         <button className="button" onClick={() => handleButtonClick("/dataForChampion")}>Individual Champion Stats</button>
         </div>
+        <div>
+        <button className="button" onClick={() => handleButtonClick("/champWinRate")}>Win Rate for Each Champion</button>
+        </div>
+        <div>
+        <button className="button" onClick={() => handleButtonClick("/champPickRate")}>Pick Rate for Each Champion</button>
+        </div>
+        <div>
+        <button className="button" onClick={() => handleButtonClick("/teamWinLoss")}>Wins and Losses for 5 Champs on Same Team</button>
+        </div>
       </div>
     </div>
     </div>

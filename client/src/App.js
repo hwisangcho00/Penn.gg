@@ -15,6 +15,10 @@ import ChampItemRecsPage from "./pages/ChampItemRecsPage";
 import ItemWinRatesPage from "./pages/ItemWinRatesPage";
 import RangedChampPage from "./pages/RangedChampPage";
 import DataForChampionPage from "./pages/DataForChampionPage";
+import ChampWinRatePage from "./pages/ChampWinRatePage";
+import StatWinRatePage from "./pages/StatWinRatePage";
+import ChampPickRatePage from "./pages/ChampPickRatePage";
+import TeamWinLossPage from "./pages/TeamWinLossPage";
 
 // createTheme enables you to customize the look and feel of your app past the default
 // in this case, we only change the color scheme
@@ -47,6 +51,10 @@ export default function App() {
           <Route path="/itemWinRates" element={<ItemWinRatesPage/>} />
           <Route path="/rangedChamp" element={<RangedChampPage/>} />
           <Route path="/dataForChampion" element={<DataForChampionPage/>} />
+          <Route path="/champWinRate" element={<ChampWinRatePage/>} />
+          <Route path="/statWinRates" element={<StatWinRatePage />} />
+          <Route path="/champPickRate" element={<ChampPickRatePage/>} />
+          <Route path="/teamWinLoss" element={<TeamWinLossPage/>} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>

@@ -204,25 +204,20 @@ const getItemRecommendation = async function(req, res) {
 }
 
 /**
- * GET : /teamCombination/:team1/:team2/:team3/:team4
+ * GET : /teamCombination/:team1/:team2/:team3/:team4/:team5
  * 
  * Query 4.	Retrieve the number of games won and lost when five specific champions are played together on the same team.
  * 
  */
 const getTeamCombination = async function(req, res) {
   connection.query(`
-    SELECT
-    COUNT(*) AS total_games,
-    SUM(win) AS wins,
-    (COUNT(*) - SUM(win)) AS losses
-    FROM
-      Player p
-    WHERE
-      p.champion_id IN (${req.params.team1}, ${req.params.team2},${req.params.team3}, ${req.params.team4})
-    GROUP BY
-      p.game_id, p.team_id
-    HAVING
-      COUNT(DISTINCT p.champion_id) = 5;
+    SELECT COUNT(*) as total_games, SUM(win) as wins, (COUNT(*) - SUM(win)) AS losses
+    FROM PlayerPerTeam ppt
+    WHERE ppt.concatId LIKE "%@${req.params.team1}@%" AND
+    ppt.concatId LIKE "%@${req.params.team2}@%" AND
+    ppt.concatId LIKE "%@${req.params.team3}@%" AND
+    ppt.concatId LIKE "%@${req.params.team4}@%" AND
+    ppt.concatId LIKE "%@${req.params.team5}@%";
     `, (err, data) => {
       if (err || data.length === 0) {
         console.log(err);
@@ -328,10 +323,16 @@ const winrate_champion = async function(req, res) {
   const orderString = order === 0 ? "DESC" : "ASC";
 
   connection.query(`
-    SELECT champion_id, COUNT(*) AS total_games_played, SUM(win) AS total_games_won, SUM(win) / COUNT(*) * 100 AS win_rate
-    FROM (SELECT champion_id, game_id, win FROM Player) as p
-    GROUP BY champion_id
-    ORDER BY win_rate ${orderString};
+  SELECT champion_id, win_rate
+  FROM (
+      SELECT
+          champion_id,
+          SUM(win) / COUNT(*) * 100 AS win_rate
+      FROM Player
+      WHERE champion_id = '${req.params.championId}'
+      GROUP BY champion_id
+  ) AS getWinrate
+  ORDER BY win_rate ${orderString};
   `, (err, data) => {
     if (err || data.length === 0) {
       console.log(err);
@@ -364,6 +365,7 @@ const pickrate_champion = async function(req, res) {
     GamesPlayedByChampion AS (
         SELECT champion_id, COUNT(*) AS total_games_played
         FROM Player
+        WHERE champion_id = '${req.params.championId}'
         GROUP BY champion_id
     )
     SELECT GPC.champion_id, c.champion_name, (CAST(GPC.total_games_played AS DECIMAL) / TG.total_games) * 100 AS pick_rate
