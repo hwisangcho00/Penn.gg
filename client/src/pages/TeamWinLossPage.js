@@ -114,7 +114,7 @@ export default function TeamWinLossPage() {
           <button onClick={handleSubmit} style={styles.submitButton}>
             Done
           </button>
-          {teamWinLoss !== null ? (
+          {teamWinLoss.total_games !== 0 ? (
             <div>
               <h2 style={{ marginTop: '40px', fontSize: '24px', color: '#C8AA6E', fontFamily: 'leagueFont' }}>
                 Total Games: {teamWinLoss.total_games}
