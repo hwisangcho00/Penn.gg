@@ -27,10 +27,11 @@ app.get('/getItemRecommendation/:championId', routes.getItemRecommendation);
 app.get('/getTeamCombination/:team1/:team2/:team3/:team4', routes.getTeamCombination);
 app.get('/getWinrateChampion/:championId', routes.winrate_champion);
 app.get('/getWinrateItem', routes.winrate_item);
-app.get('/getPickrateChampion', routes.pickrate_champion);
+app.get('/getPickrateChampion/:championId', routes.pickrate_champion);
 app.get('/getchampionData/:championId', routes.champion_data);
 app.get('/getRangedWinrate', routes.ranged_winrate);
 app.get('/getStatWinrate', routes.stat_winrate);
+
 
 
 app.listen(config.server_port, () => {

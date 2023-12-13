@@ -370,6 +370,7 @@ const pickrate_champion = async function(req, res) {
     GamesPlayedByChampion AS (
         SELECT champion_id, COUNT(*) AS total_games_played
         FROM Player
+        WHERE champion_id = '${req.params.championId}'
         GROUP BY champion_id
     )
     SELECT GPC.champion_id, c.champion_name, (CAST(GPC.total_games_played AS DECIMAL) / TG.total_games) * 100 AS pick_rate
