@@ -328,10 +328,16 @@ const winrate_champion = async function(req, res) {
   const orderString = order === 0 ? "DESC" : "ASC";
 
   connection.query(`
-    SELECT champion_id, COUNT(*) AS total_games_played, SUM(win) AS total_games_won, SUM(win) / COUNT(*) * 100 AS win_rate
-    FROM (SELECT champion_id, game_id, win FROM Player) as p
-    GROUP BY champion_id
-    ORDER BY win_rate ${orderString};
+  SELECT champion_id, win_rate
+  FROM (
+      SELECT
+          champion_id,
+          SUM(win) / COUNT(*) * 100 AS win_rate
+      FROM Player
+      WHERE champion_id = '${req.params.championId}'
+      GROUP BY champion_id
+  ) AS getWinrate
+  ORDER BY win_rate ${orderString};
   `, (err, data) => {
     if (err || data.length === 0) {
       console.log(err);
