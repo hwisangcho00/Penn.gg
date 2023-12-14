@@ -13,7 +13,7 @@ export default function TeamWinLossPage() {
   const [champ3, setChamp3] = useState('');
   const [champ4, setChamp4] = useState('');
   const [champ5, setChamp5] = useState('');
-  const [teamWinLoss, setTeamWinLoss] = useState(null);
+  const [teamWinLoss, setTeamWinLoss] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
