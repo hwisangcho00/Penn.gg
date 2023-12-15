@@ -13,7 +13,7 @@ export default function TeamWinLossPage() {
   const [champ3, setChamp3] = useState('');
   const [champ4, setChamp4] = useState('');
   const [champ5, setChamp5] = useState('');
-  const [teamWinLoss, setTeamWinLoss] = useState(0);
+  const [teamWinLoss, setTeamWinLoss] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -66,6 +66,10 @@ export default function TeamWinLossPage() {
 
 
   const handleSubmit = async () => {
+    if (champ1 === '' || champ2 === '' || champ3 === '' || champ4 === '' || champ5 === '') {
+      return;
+    }
+
     try {
       const url = `http://${config.server_host}:${config.server_port}/getTeamCombination/${champ1}/${champ2}/${champ3}/${champ4}/${champ5}`;
       console.log('Request URL:', url);
@@ -80,8 +84,13 @@ export default function TeamWinLossPage() {
   
       const data = await response.json();
       console.log('Received data from the server:', data);
+
+      if (Object.keys(data).length > 0) {
+        setTeamWinLoss(data && data.length > 0 ? data[0] : null);
+      } else {
+        setTeamWinLoss(null);
+      }
   
-      setTeamWinLoss(data && data.length > 0 ? data[0] : null);
     } catch (error) {
       console.error('Error fetching data:', error);
       setTeamWinLoss(null);
@@ -103,6 +112,7 @@ export default function TeamWinLossPage() {
             Choose your team!
           </h2>
           {Array.from({ length: 5 }).map((_, index) => (
+            <div style = {styles.dropDown}>
             <DropDown
               key={index}
               options={options}
@@ -110,11 +120,12 @@ export default function TeamWinLossPage() {
               onSelect={(value) => handleSelect(value, index)}
               style={{ ...styles.champSelect, width: '50%' }}
             />
+            </div>
           ))}
           <button onClick={handleSubmit} style={styles.submitButton}>
             Done
           </button>
-          {teamWinLoss.total_games !== 0 ? (
+          {teamWinLoss !== null ? (
             <div>
               <h2 style={{ marginTop: '40px', fontSize: '24px', color: '#C8AA6E', fontFamily: 'leagueFont' }}>
                 Total Games: {teamWinLoss.total_games}
@@ -138,6 +149,10 @@ export default function TeamWinLossPage() {
 }
 
 const styles = {
+  dropDown: {
+    padding: '1vh',
+    width: '30vw'
+  },
   container: {
     height: '100vh',
     display: 'flex',
