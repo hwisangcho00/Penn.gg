@@ -12,10 +12,6 @@ const connection = mysql.createConnection({
 });
 connection.connect((err) => err && console.log(err));
 
-/******************
- * WARM UP ROUTES *
- ******************/
-
 // Simple Testing Route : GET /random
 const random = async function(req, res) {
   connection.query(`
@@ -35,6 +31,8 @@ const random = async function(req, res) {
 }
 
 /**
+ * 
+ * path: /comps
  * 
  * GET : /getBestTeammate/:championId/:lane
  * 
@@ -94,6 +92,8 @@ const getBestTeammate = async function(req, res) {
 
 /**
  * 
+ * path: /comps
+ * 
  * GET : /getTopOpponentsByLane/:championId/:lane
  * 
  * Query 2.	Given a champion, choose five champions from each lane with the highest losing probability 
@@ -152,6 +152,8 @@ const getTopOpponentsByLane = async function(req, res) {
 }
 
 /**
+ * path : /champItemRecs
+ * 
  * GET : /itemRecommendation/:championId
  * 
  * Query 3.	For a given champion_id, recommend the list of items by presenting them in order of highest winning probability to lowest when an item is purchased
@@ -204,6 +206,8 @@ const getItemRecommendation = async function(req, res) {
 }
 
 /**
+ * path: /teamWinLoss
+ * 
  * GET : /teamCombination/:team1/:team2/:team3/:team4/:team5
  * 
  * Query 4.	Retrieve the number of games won and lost when five specific champions are played together on the same team.
@@ -230,6 +234,8 @@ const getTeamCombination = async function(req, res) {
 
 
 /**
+ * path: /rangedChamp
+ * 
  * Query 5.	Calculate winrate for teams that have 1, 2, 3, 4, or 5 champions that are ranged on the team 
  * (trying to see how ranged champions influence winrate)
  * 
@@ -262,6 +268,8 @@ const ranged_winrate = async function(req, res) {
 
 
 /**
+ * path: /dataForChampion
+ * 
  * GET /champion_data/:championId
  * 
  * Query 6.	Show data for a certain champion (champion_id, name, average (kills, deaths, assists, largestKillingSpree, largestMultiKill, killingSprees, longestTimeSpentLiving)) 
@@ -309,6 +317,8 @@ const champion_data = async function(req, res) {
 
 
 /**
+ * path: /champWinRate
+ * 
  * Query 7.	Calculate the win rate for each champion (each champion can be distinguished by the unique champion_id) 
  * and return the list of champions and their respective win rates in descending order (the champion with the highest win rate appears first on the list).
  * 
@@ -344,6 +354,8 @@ const winrate_champion = async function(req, res) {
 }
 
 /**
+ * path: /champPickRate
+ * 
  * Query 8.	Calculate the pick rate for each champion (that is, how many times that champion has been chosen to play in a game) 
  * and return the list of champions and their respective pick rate in descending order 
  * (the champion with the highest pick rate appears first on the list).
@@ -384,6 +396,8 @@ const pickrate_champion = async function(req, res) {
 }
 
 /**
+ * path: /statWinRates
+ * 
  * Query 9.	Calculate the win rate for each stat
  * 
  * Used Index to optimize the efficiency of the query
@@ -443,6 +457,8 @@ const stat_winrate = async function(req, res) {
 }
 
 /**
+ * path: /itemWinRates
+ * 
  * Query 10. Calculate the winrates for each item, also returning some of the information about each item.
  * 
  * Used Index to optimize the efficiency of the query
