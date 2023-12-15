@@ -64,11 +64,27 @@ export default function TeamWinLossPage() {
     }
   };
 
+  function areAnyEqual(values) {
+    for (let i = 0; i < values.length; i++) {
+      if (values.slice(i + 1).includes(values[i])) {
+        return true;
+      }
+    }
+    return false;
+  }
+
 
   const handleSubmit = async () => {
     if (champ1 === '' || champ2 === '' || champ3 === '' || champ4 === '' || champ5 === '') {
       return;
     }
+    const values = [champ1, champ2, champ3, champ4, champ5];
+    
+    if (areAnyEqual(values))  {
+      return;
+    }
+  
+
 
     try {
       const url = `http://${config.server_host}:${config.server_port}/getTeamCombination/${champ1}/${champ2}/${champ3}/${champ4}/${champ5}`;
