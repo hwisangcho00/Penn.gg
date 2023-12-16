@@ -62,6 +62,9 @@ export default function HomePage() {
   // when comps button is clicked, navigate to the composition query page and execute query
   const navigate = useNavigate();
   const handleButtonClick = () => {
+    if (selectedOption === '') {
+      return;
+    }
     //navigate("/comps", { state: { selectedChampion: selectedOption} });
     navigate("/comps", { state: { selectedChampion: selectedOption, selectedKey: selectedID} });
   };
