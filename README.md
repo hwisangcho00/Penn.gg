@@ -1,4 +1,4 @@
-# CIS-4500: Penn.gg
+#Penn.gg
 ![Screenshot 2023-12-13 004820](https://github.com/hwisangcho00/CIS-4500_League_Simulator/assets/81304520/76b05c95-5226-4ed1-a6ad-e0ebf1012a38)
 
 ## How to Run
